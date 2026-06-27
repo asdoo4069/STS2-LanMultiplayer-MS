@@ -51,8 +51,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Services
                     var playerNamesJson = SaveStore.ReadFile(CurrentMultiplayerRunPlayerNamesPath);
                     if (!string.IsNullOrEmpty(playerNamesJson))
                     {
-                        lanPlayerNameService.PlayerNames = JsonSerializer.Deserialize<PlayerNames>(playerNamesJson) ??
-                                                           new PlayerNames();
+                        lanPlayerNameService.PlayerNames = JsonSerializer.Deserialize<PlayerNames>(playerNamesJson) ?? [];
                     }
 
                     lanPlayerNameService.SetHostPlayerName();

@@ -8,12 +8,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Models
     {
         public string playerName;
 
-        public bool ShouldBroadcast => false;
-        public bool ShouldBuffer => false;
-        public NetTransferMode Mode => NetTransferMode.Reliable;
-        public LogLevel LogLevel => LogLevel.Info;
+        public readonly bool ShouldBroadcast => false;
+        public readonly bool ShouldBuffer => false;
+        public readonly NetTransferMode Mode => NetTransferMode.Reliable;
+        public readonly LogLevel LogLevel => LogLevel.Info;
 
-        public void Serialize(PacketWriter writer)
+        public readonly void Serialize(PacketWriter writer)
         {
             writer.WriteString(playerName);
         }

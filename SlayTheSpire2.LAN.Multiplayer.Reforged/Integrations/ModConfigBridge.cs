@@ -119,17 +119,17 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
 
                 if (registerMethod.GetParameters().Length == 4)
                 {
-                    registerMethod.Invoke(null, new object[]
-                    {
+                    registerMethod.Invoke(null,
+                    [
                         ModId, displayNames["en"], displayNames, entries
-                    });
+                    ]);
                 }
                 else
                 {
-                    registerMethod.Invoke(null, new object[]
-                    {
+                    registerMethod.Invoke(null,
+                    [
                         ModId, displayNames["en"], entries
-                    });
+                    ]);
                 }
 
                 _registered = true;
@@ -145,144 +145,136 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
         private static Array BuildEntries()
         {
             var settings = SettingsService.Instance.SettingsModel;
-            var entries = new List<object>();
-
-            entries.Add(Entry(config =>
+            var entries = new List<object>
+            {
+                Entry(config =>
             {
                 Set(config, "Label", "Connection");
                 Set(config, "Labels", L("Connection", "连接设置"));
                 Set(config, "Type", EnumValue("Header"));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", HostPortKey);
-                Set(config, "Label", "Default LAN port");
-                Set(config, "Labels", L("Default LAN port", "默认局域网端口"));
-                Set(config, "Type", EnumValue("TextInput"));
-                Set(config, "DefaultValue", (object)settings.HostPort.ToString(CultureInfo.InvariantCulture));
-                Set(config, "MaxLength", 5);
-                Set(config, "Placeholder", "33771");
-                Set(config, "Validator", new Func<object, bool>(value => TryParsePort(ToText(value), out _)));
-                Set(config, "Description", "Used when hosting and when a join address does not contain a port.");
-                Set(config, "Descriptions", L(
-                    "Used when hosting and when a join address does not contain a port.",
-                    "用于创建主机；加入地址未填写端口时也会使用此端口。"));
-                Set(config, "OnChanged", new Action<object>(OnHostPortChanged));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", HostMaxPlayersKey);
-                Set(config, "Label", "Maximum players");
-                Set(config, "Labels", L("Maximum players", "最大玩家数"));
-                Set(config, "Type", EnumValue("Slider"));
-                Set(config, "DefaultValue", (object)(float)Math.Clamp(settings.HostMaxPlayers, 2, 16));
-                Set(config, "Min", 2f);
-                Set(config, "Max", 16f);
-                Set(config, "Step", 1f);
-                Set(config, "Format", "F0");
-                Set(config, "Description", "Maximum number of players in a hosted LAN lobby.");
-                Set(config, "Descriptions", L(
-                    "Maximum number of players in a hosted LAN lobby.",
-                    "创建局域网房间时允许进入的最大玩家数。"));
-                Set(config, "OnChanged", new Action<object>(OnHostMaxPlayersChanged));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", ConnectTimeoutKey);
-                Set(config, "Label", "Connection timeout");
-                Set(config, "Labels", L("Connection timeout", "连接超时"));
-                Set(config, "Type", EnumValue("Slider"));
-                Set(config, "DefaultValue", (object)(float)Math.Clamp(settings.ConnectTimeoutSeconds, 3, 60));
-                Set(config, "Min", 3f);
-                Set(config, "Max", 60f);
-                Set(config, "Step", 1f);
-                Set(config, "Format", "F0");
-                Set(config, "Description", "Seconds allowed for the ENet connection and handshake.");
-                Set(config, "Descriptions", L(
-                    "Seconds allowed for the ENet connection and handshake.",
-                    "等待 ENet 建立连接及完成握手的最长秒数。"));
-                Set(config, "OnChanged", new Action<object>(OnConnectTimeoutChanged));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", DefaultAddressKey);
-                Set(config, "Label", "Default server address");
-                Set(config, "Labels", L("Default server address", "默认服务器地址"));
-                Set(config, "Type", EnumValue("TextInput"));
-                Set(config, "DefaultValue", (object)settings.IPAddress);
-                Set(config, "MaxLength", 128);
-                Set(config, "Placeholder", "192.168.1.100:33771");
-                Set(config, "Validator", new Func<object, bool>(value => IsValidAddress(ToText(value))));
-                Set(config, "Description",
-                    "Initial address shown on the LAN join screen. An explicit :port overrides the default LAN port.");
-                Set(config, "Descriptions", L(
-                    "Initial address shown on the LAN join screen. An explicit :port overrides the default LAN port.",
-                    "局域网加入界面默认显示的地址；地址中显式填写的端口会覆盖默认端口。"));
-                Set(config, "OnChanged", new Action<object>(OnDefaultAddressChanged));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", RememberAddressKey);
-                Set(config, "Label", "Remember last server");
-                Set(config, "Labels", L("Remember last server", "记住上次服务器"));
-                Set(config, "Type", EnumValue("Toggle"));
-                Set(config, "DefaultValue", (object)settings.RememberJoinAddress);
-                Set(config, "Description", "Save the submitted join address as the next default.");
-                Set(config, "Descriptions", L(
-                    "Save the submitted join address as the next default.",
-                    "提交有效加入地址后，将其保存为下次打开界面时的默认地址。"));
-                Set(config, "OnChanged", new Action<object>(OnRememberAddressChanged));
-            }));
-
-            entries.Add(Entry(config => Set(config, "Type", EnumValue("Separator"))));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Label", "Identity");
-                Set(config, "Labels", L("Identity", "身份设置"));
-                Set(config, "Type", EnumValue("Header"));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", PlayerNameKey);
-                Set(config, "Label", "Player name");
-                Set(config, "Labels", L("Player name", "玩家名称"));
-                Set(config, "Type", EnumValue("TextInput"));
-                Set(config, "DefaultValue", (object)settings.PlayerName);
-                Set(config, "MaxLength", 16);
-                Set(config, "Placeholder", "Player");
-                Set(config, "Validator", new Func<object, bool>(value =>
-                    !PlayerNameLineEdit.GetPlayerNameIsInvalid(ToText(value))));
-                Set(config, "Description", "Name displayed to other LAN players.");
-                Set(config, "Descriptions", L(
-                    "Name displayed to other LAN players.",
-                    "向其他局域网玩家显示的名称。"));
-                Set(config, "OnChanged", new Action<object>(OnPlayerNameChanged));
-            }));
-
-            entries.Add(Entry(config =>
-            {
-                Set(config, "Key", NetIdKey);
-                Set(config, "Label", "Preferred Net ID");
-                Set(config, "Labels", L("Preferred Net ID", "首选网络 ID"));
-                Set(config, "Type", EnumValue("TextInput"));
-                Set(config, "DefaultValue", (object)settings.NetId.ToString(CultureInfo.InvariantCulture));
-                Set(config, "MaxLength", 20);
-                Set(config, "Placeholder", "1000");
-                Set(config, "Validator", new Func<object, bool>(value => TryParseNetId(ToText(value), out _)));
-                Set(config, "Description",
-                    "Preferred local player ID. It must be at least 2 and should be unique per client; the host can resolve collisions automatically.");
-                Set(config, "Descriptions", L(
-                    "Preferred local player ID. It must be at least 2 and should be unique per client; the host can resolve collisions automatically.",
-                    "本机首选玩家 ID，必须不小于 2，且各客户端最好不同；发生冲突时主机可自动重新分配。"));
-                Set(config, "OnChanged", new Action<object>(OnNetIdChanged));
-            }));
+            }),
+                Entry(config =>
+                {
+                    Set(config, "Key", HostPortKey);
+                    Set(config, "Label", "Default LAN port");
+                    Set(config, "Labels", L("Default LAN port", "默认局域网端口"));
+                    Set(config, "Type", EnumValue("TextInput"));
+                    Set(config, "DefaultValue", settings.HostPort.ToString(CultureInfo.InvariantCulture));
+                    Set(config, "MaxLength", 5);
+                    Set(config, "Placeholder", "33771");
+                    Set(config, "Validator", new Func<object, bool>(value => TryParsePort(ToText(value), out _)));
+                    Set(config, "Description", "Used when hosting and when a join address does not contain a port.");
+                    Set(config, "Descriptions", L(
+                        "Used when hosting and when a join address does not contain a port.",
+                        "用于创建主机；加入地址未填写端口时也会使用此端口。"));
+                    Set(config, "OnChanged", new Action<object>(OnHostPortChanged));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", HostMaxPlayersKey);
+                    Set(config, "Label", "Maximum players");
+                    Set(config, "Labels", L("Maximum players", "最大玩家数"));
+                    Set(config, "Type", EnumValue("Slider"));
+                    Set(config, "DefaultValue", (float)Math.Clamp(settings.HostMaxPlayers, 2, 16));
+                    Set(config, "Min", 2f);
+                    Set(config, "Max", 16f);
+                    Set(config, "Step", 1f);
+                    Set(config, "Format", "F0");
+                    Set(config, "Description", "Maximum number of players in a hosted LAN lobby.");
+                    Set(config, "Descriptions", L(
+                        "Maximum number of players in a hosted LAN lobby.",
+                        "创建局域网房间时允许进入的最大玩家数。"));
+                    Set(config, "OnChanged", new Action<object>(OnHostMaxPlayersChanged));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", ConnectTimeoutKey);
+                    Set(config, "Label", "Connection timeout");
+                    Set(config, "Labels", L("Connection timeout", "连接超时"));
+                    Set(config, "Type", EnumValue("Slider"));
+                    Set(config, "DefaultValue", (float)Math.Clamp(settings.ConnectTimeoutSeconds, 3, 60));
+                    Set(config, "Min", 3f);
+                    Set(config, "Max", 60f);
+                    Set(config, "Step", 1f);
+                    Set(config, "Format", "F0");
+                    Set(config, "Description", "Seconds allowed for the ENet connection and handshake.");
+                    Set(config, "Descriptions", L(
+                        "Seconds allowed for the ENet connection and handshake.",
+                        "等待 ENet 建立连接及完成握手的最长秒数。"));
+                    Set(config, "OnChanged", new Action<object>(OnConnectTimeoutChanged));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", DefaultAddressKey);
+                    Set(config, "Label", "Default server address");
+                    Set(config, "Labels", L("Default server address", "默认服务器地址"));
+                    Set(config, "Type", EnumValue("TextInput"));
+                    Set(config, "DefaultValue", settings.IPAddress);
+                    Set(config, "MaxLength", 128);
+                    Set(config, "Placeholder", "192.168.1.100:33771");
+                    Set(config, "Validator", new Func<object, bool>(value => IsValidAddress(ToText(value))));
+                    Set(config, "Description",
+                        "Initial address shown on the LAN join screen. An explicit :port overrides the default LAN port.");
+                    Set(config, "Descriptions", L(
+                        "Initial address shown on the LAN join screen. An explicit :port overrides the default LAN port.",
+                        "局域网加入界面默认显示的地址；地址中显式填写的端口会覆盖默认端口。"));
+                    Set(config, "OnChanged", new Action<object>(OnDefaultAddressChanged));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", RememberAddressKey);
+                    Set(config, "Label", "Remember last server");
+                    Set(config, "Labels", L("Remember last server", "记住上次服务器"));
+                    Set(config, "Type", EnumValue("Toggle"));
+                    Set(config, "DefaultValue", settings.RememberJoinAddress);
+                    Set(config, "Description", "Save the submitted join address as the next default.");
+                    Set(config, "Descriptions", L(
+                        "Save the submitted join address as the next default.",
+                        "提交有效加入地址后，将其保存为下次打开界面时的默认地址。"));
+                    Set(config, "OnChanged", new Action<object>(OnRememberAddressChanged));
+                }),
+                Entry(config => Set(config, "Type", EnumValue("Separator"))),
+                Entry(config =>
+                {
+                    Set(config, "Label", "Identity");
+                    Set(config, "Labels", L("Identity", "身份设置"));
+                    Set(config, "Type", EnumValue("Header"));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", PlayerNameKey);
+                    Set(config, "Label", "Player name");
+                    Set(config, "Labels", L("Player name", "玩家名称"));
+                    Set(config, "Type", EnumValue("TextInput"));
+                    Set(config, "DefaultValue", settings.PlayerName);
+                    Set(config, "MaxLength", 16);
+                    Set(config, "Placeholder", "Player");
+                    Set(config, "Validator", new Func<object, bool>(value =>
+                        !PlayerNameLineEdit.GetPlayerNameIsInvalid(ToText(value))));
+                    Set(config, "Description", "Name displayed to other LAN players.");
+                    Set(config, "Descriptions", L(
+                        "Name displayed to other LAN players.",
+                        "向其他局域网玩家显示的名称。"));
+                    Set(config, "OnChanged", new Action<object>(OnPlayerNameChanged));
+                }),
+                Entry(config =>
+                {
+                    Set(config, "Key", NetIdKey);
+                    Set(config, "Label", "Preferred Net ID");
+                    Set(config, "Labels", L("Preferred Net ID", "首选网络 ID"));
+                    Set(config, "Type", EnumValue("TextInput"));
+                    Set(config, "DefaultValue", settings.NetId.ToString(CultureInfo.InvariantCulture));
+                    Set(config, "MaxLength", 20);
+                    Set(config, "Placeholder", "1000");
+                    Set(config, "Validator", new Func<object, bool>(value => TryParseNetId(ToText(value), out _)));
+                    Set(config, "Description",
+                        "Preferred local player ID. It must be at least 2 and should be unique per client; the host can resolve collisions automatically.");
+                    Set(config, "Descriptions", L(
+                        "Preferred local player ID. It must be at least 2 and should be unique per client; the host can resolve collisions automatically.",
+                        "本机首选玩家 ID，必须不小于 2，且各客户端最好不同；发生冲突时主机可自动重新分配。"));
+                    Set(config, "OnChanged", new Action<object>(OnNetIdChanged));
+                })
+            };
 
             var typedArray = Array.CreateInstance(_entryType!, entries.Count);
             for (var index = 0; index < entries.Count; index++)
@@ -336,7 +328,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
             try
             {
                 _apiType!.GetMethod("SetValue", BindingFlags.Public | BindingFlags.Static)
-                    ?.Invoke(null, new[] { (object)ModId, key, value });
+                    ?.Invoke(null, [ModId, key, value]);
             }
             catch (Exception exception)
             {
@@ -357,7 +349,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
                         candidate.IsGenericMethodDefinition);
 
                 var result = method?.MakeGenericMethod(typeof(T))
-                    .Invoke(null, new object[] { ModId, key });
+                    .Invoke(null, [ModId, key]);
 
                 return result is T typed ? typed : fallback;
             }
