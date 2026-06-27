@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Nodes.Screens.DailyRun;
 using MegaCrit.Sts2.Core.Nodes.Screens.MainMenu;
 using MegaCrit.Sts2.Core.Platform;
 using SlayTheSpire2.LAN.Multiplayer.Reforged.Components;
+using SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers;
 using SlayTheSpire2.LAN.Multiplayer.Reforged.Services;
 
 // ReSharper disable UnusedMember.Global
@@ -23,8 +24,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NCharacterSelectScreen).GetMethod("_Ready", flags)!;
-            yield return typeof(NDailyRunScreen).GetMethod("_Ready", flags)!;
-            yield return typeof(NCustomRunScreen).GetMethod("_Ready", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunScreen).GetMethod("_Ready", flags)!;
+                yield return typeof(NCustomRunScreen).GetMethod("_Ready", flags)!;
+            }
         }
 
         private static void Prefix(NSubmenu __instance)
@@ -44,8 +49,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NCharacterSelectScreen).GetMethod("InitializeMultiplayerAsHost", flags)!;
-            yield return typeof(NDailyRunScreen).GetMethod("InitializeMultiplayerAsHost", flags)!;
-            yield return typeof(NCustomRunScreen).GetMethod("InitializeMultiplayerAsHost", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunScreen).GetMethod("InitializeMultiplayerAsHost", flags)!;
+                yield return typeof(NCustomRunScreen).GetMethod("InitializeMultiplayerAsHost", flags)!;
+            }
         }
 
         private static void Prefix(NSubmenu __instance, INetGameService gameService)
@@ -94,8 +103,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NCharacterSelectScreen).GetMethod("InitializeMultiplayerAsClient", flags)!;
-            yield return typeof(NDailyRunScreen).GetMethod("InitializeMultiplayerAsClient", flags)!;
-            yield return typeof(NCustomRunScreen).GetMethod("InitializeMultiplayerAsClient", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunScreen).GetMethod("InitializeMultiplayerAsClient", flags)!;
+                yield return typeof(NCustomRunScreen).GetMethod("InitializeMultiplayerAsClient", flags)!;
+            }
         }
 
         private static void Prefix(NSubmenu __instance, INetGameService gameService)
@@ -136,8 +149,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NCharacterSelectScreen).GetMethod("InitializeSingleplayer", flags)!;
-            yield return typeof(NDailyRunScreen).GetMethod("InitializeSingleplayer", flags)!;
-            yield return typeof(NCustomRunScreen).GetMethod("InitializeSingleplayer", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunScreen).GetMethod("InitializeSingleplayer", flags)!;
+                yield return typeof(NCustomRunScreen).GetMethod("InitializeSingleplayer", flags)!;
+            }
         }
 
         private static void Postfix(NSubmenu __instance)

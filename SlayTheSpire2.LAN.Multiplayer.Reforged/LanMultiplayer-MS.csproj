@@ -53,4 +53,11 @@
         <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
         <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(ModsPath)$(AssemblyName)/$(AssemblyName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" ContinueOnError="WarnAndContinue"/>
     </Target>
+
+    <!-- 안드로이드 런처 폴더로 복사 -->
+    <Target Name="CopyToAndroid" AfterTargets="GodotPublish">
+        <Exec Command="&quot;D:\Utility\platform-tools\adb.exe&quot; push &quot;$(ModsPath)$(MSBuildProjectName)&quot; /storage/emulated/0/StS2LauncherMM/Mods/" />
+        <Exec Command="&quot;D:\Utility\platform-tools\adb.exe&quot; shell run-as com.megacrit.sts2re cp -r /storage/emulated/0/StS2LauncherMM/Mods/$(MSBuildProjectName) /data/data/com.megacrit.sts2re/files/mods/local/" />
+        <Exec Command="&quot;D:\Utility\platform-tools\adb.exe&quot; shell rm -rf /storage/emulated/0/StS2LauncherMM/Mods/$(MSBuildProjectName)" />
+    </Target>
 </Project>

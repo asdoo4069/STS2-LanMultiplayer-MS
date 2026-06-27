@@ -23,10 +23,15 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NMultiplayerLoadGameScreen).GetMethod("InitializeAsHost", flags)!;
-            yield return typeof(NDailyRunLoadScreen).GetMethod("InitializeAsHost", flags)!;
-            yield return typeof(NCustomRunLoadScreen).GetMethod("InitializeAsHost", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunLoadScreen).GetMethod("InitializeAsHost", flags)!;
+                yield return typeof(NCustomRunLoadScreen).GetMethod("InitializeAsHost", flags)!;
+            }
         }
 
+        [HarmonyPrefix]
         private static void Prefix(NSubmenu __instance, INetGameService gameService)
         {
             if (gameService.Platform == PlatformType.None)
@@ -57,10 +62,15 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
 
             yield return typeof(NMultiplayerLoadGameScreen).GetMethod("InitializeAsClient", flags)!;
-            yield return typeof(NDailyRunLoadScreen).GetMethod("InitializeAsClient", flags)!;
-            yield return typeof(NCustomRunLoadScreen).GetMethod("InitializeAsClient", flags)!;
+
+            if (!LanMultiplayerUtil.IsMobilePlatform())
+            {
+                yield return typeof(NDailyRunLoadScreen).GetMethod("InitializeAsClient", flags)!;
+                yield return typeof(NCustomRunLoadScreen).GetMethod("InitializeAsClient", flags)!;
+            }
         }
 
+        [HarmonyPrefix]
         private static void Prefix(NSubmenu __instance, INetGameService gameService)
         {
             if (gameService.Platform == PlatformType.None)
@@ -86,14 +96,20 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
     [HarmonyPatch]
     internal class RunLoadScreenShouldAllowRunToBeginPatchs
     {
+        [HarmonyPrepare]
+        private static bool Prepare()
+        {
+            return !LanMultiplayerUtil.IsMobilePlatform();
+        }
+
         private static IEnumerable<MethodInfo> TargetMethods()
         {
             const BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
-
             yield return typeof(NDailyRunLoadScreen).GetMethod("ShouldAllowRunToBegin", flags)!;
             yield return typeof(NCustomRunLoadScreen).GetMethod("ShouldAllowRunToBegin", flags)!;
         }
 
+        [HarmonyPrefix]
         private static bool Prefix(LoadRunLobby ____lobby, ref Task<bool> __result)
         {
             if (____lobby.NetService.Platform == PlatformType.None)
@@ -109,6 +125,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
     [HarmonyPatch(typeof(NMultiplayerLoadGameScreen), "ShouldAllowRunToBegin")]
     internal class RunLoadScreenShouldAllowRunToBeginPatch
     {
+        [HarmonyPrefix]
         private static bool Prefix(LoadRunLobby ____runLobby, ref Task<bool> __result)
         {
             if (____runLobby.NetService.Platform == PlatformType.None)
