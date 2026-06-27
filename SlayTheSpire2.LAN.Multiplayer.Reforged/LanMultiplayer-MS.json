@@ -1,0 +1,12 @@
+{
+    "id": "LanMultiplayer-MS",
+    "name": "LanMultiplayer-MS",
+    "author": "Minsu",
+    "description": "메뉴에 LAN 멀티플레이 기능 추가 (모바일 호환 포크)",
+    "version": "1.0.1",
+    "has_pck": true,
+    "has_dll": true,
+    "dependencies": [],
+    "affects_gameplay": true,
+    "min_game_version": "0.107.1"
+}

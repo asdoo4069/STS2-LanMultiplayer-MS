@@ -1,39 +1,56 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-<PropertyGroup>
-  <TargetFramework>net9.0</TargetFramework>
-  <ImplicitUsings>enable</ImplicitUsings>
-  <Nullable>enable</Nullable>
-  <AssemblyVersion>1.6.3.1</AssemblyVersion>
-  <FileVersion>1.6.3.1</FileVersion>
-  <GodotDisabledSourceGenerators>ScriptPathAttribute</GodotDisabledSourceGenerators>
+﻿<Project Sdk="Godot.NET.Sdk/4.5.1" InitialTargets="CheckDependencyPaths">
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <DefaultItemExcludes>$(DefaultItemExcludes);packages/**</DefaultItemExcludes>
+        <AppOutputBase>$(MSBuildProjectDirectory)\</AppOutputBase>
+        <PathMap>$(AppOutputBase)=.\</PathMap>
+        <AssemblyName>LanMultiplayer-MS</AssemblyName>
+        <AssemblyVersion>1.6.3.1</AssemblyVersion>
+        <FileVersion>1.6.3.1</FileVersion>
+        <NoWarn>$(NoWarn);MSB3270</NoWarn>
+        <ModDllDeploySource>$(MSBuildProjectDirectory)/.godot/mono/temp/bin/$(Configuration)/$(AssemblyName).dll</ModDllDeploySource>
+    </PropertyGroup>
 
-  <Sts2Dir>E:\SteamLibrary\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64</Sts2Dir>
-</PropertyGroup>
+    <PropertyGroup>
+        <SteamLibraryPath Condition="'$(SteamLibraryPath)' == ''">D:\Games\Steam\steamapps</SteamLibraryPath>
+        <GodotPath Condition="'$(GodotPath)' == ''">D:\WorkSpace\Megadot\MegaDot_v4.5.1-stable_mono_win64.exe</GodotPath>
+        <Sts2Path>$(SteamLibraryPath)\common\Slay the Spire 2</Sts2Path>
+        <ModsPath>$(Sts2Path)\mods\</ModsPath>
+        <Sts2DataDir>$(Sts2Path)\data_sts2_windows_x86_64</Sts2DataDir>
+    </PropertyGroup>
 
-<ItemGroup>
-  <PackageReference Include="Godot.SourceGenerators" Version="4.5.1" />
-  <CompilerVisibleProperty Include="GodotDisabledSourceGenerators" />
-</ItemGroup>
+    <ItemGroup Condition="Exists('$(Sts2DataDir)')">
+        <Reference Include="0Harmony">
+            <HintPath>$(Sts2DataDir)\0Harmony.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="sts2">
+            <HintPath>$(Sts2DataDir)\sts2.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <Reference Include="Steamworks.NET">
+            <HintPath>$(Sts2DataDir)\Steamworks.NET.dll</HintPath>
+            <Private>false</Private>
+        </Reference>
+        <AdditionalFiles Include="LanMultiplayer-MS/localization/**/*.json"/>
+    </ItemGroup>
 
-<ItemGroup>
-  <Reference Include="0Harmony">
-    <HintPath>$(Sts2Dir)\0Harmony.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
+    <Target Name="CheckDependencyPaths">
+        <Error Text="Slay the Spire 2 data not found at path '$(Sts2DataDir)'" Condition="'$(Sts2DataDir)' == '' or !Exists('$(Sts2DataDir)')"/>
+        <Error Text="Godot not found at path '$(GodotPath)'" Condition="'$(GodotPath)' == '' or !Exists('$(GodotPath)')"/>
+    </Target>
 
-  <Reference Include="GodotSharp">
-    <HintPath>$(Sts2Dir)\GodotSharp.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
+    <Target Name="CopyToModsFolderOnBuild" AfterTargets="PostBuildEvent">
+        <Message Text="Copying .dll and manifest to mods folder." Importance="high"/>
+        <Copy SourceFiles="$(ModDllDeploySource)" DestinationFolder="$(ModsPath)$(AssemblyName)/"/>
+        <Copy SourceFiles="LanMultiplayer-MS.json" DestinationFolder="$(ModsPath)$(AssemblyName)/"/>
+    </Target>
 
-  <Reference Include="Steamworks.NET">
-    <HintPath>$(Sts2Dir)\Steamworks.NET.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
-
-  <Reference Include="sts2">
-    <HintPath>$(Sts2Dir)\sts2.dll</HintPath>
-    <Private>false</Private>
-  </Reference>
-</ItemGroup>
+    <Target Name="GodotPublish" AfterTargets="Publish" Condition="'$(GodotPath)' != '' and Exists('$(GodotPath)') and '$(IsInnerGodotExport)' != 'true'">
+        <Message Text="Exporting Godot .pck to mods folder" Importance="high"/>
+        <Exec Command="&quot;$(GodotPath)&quot; --headless --export-pack &quot;Windows Desktop&quot; &quot;$(ModsPath)$(AssemblyName)/$(AssemblyName).pck&quot;" EnvironmentVariables="IsInnerGodotExport=true;MSBUILDDISABLENODEREUSE=1" ContinueOnError="WarnAndContinue"/>
+    </Target>
 </Project>
