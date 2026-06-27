@@ -80,17 +80,15 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Services
 
             if (readSaveResult.Status == ReadSaveStatus.FileNotFound)
             {
-                Log.Info("Multiplayer run save file not found at " + CurrentMultiplayerRunSavePath);
+                Log.Info("[LanMultiplayer-MS] Multiplayer run save file not found at " + CurrentMultiplayerRunSavePath);
             }
             else if (!readSaveResult.Status.IsRecoverable())
             {
-                Log.Error(
-                    $"Failed to load multiplayer run save: status={readSaveResult.Status} msg={readSaveResult.ErrorMessage}");
+                Log.Error($"[LanMultiplayer-MS] Failed to load multiplayer run save: status={readSaveResult.Status} msg={readSaveResult.ErrorMessage}");
             }
             else
             {
-                Log.Warn(
-                    $"Multiplayer run save had recoverable issues: status={readSaveResult.Status} msg={readSaveResult.ErrorMessage}");
+                Log.Warn($"[LanMultiplayer-MS] Multiplayer run save had recoverable issues: status={readSaveResult.Status} msg={readSaveResult.ErrorMessage}");
             }
 
             return readSaveResult;

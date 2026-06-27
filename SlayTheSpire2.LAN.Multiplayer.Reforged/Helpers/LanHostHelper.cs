@@ -45,32 +45,32 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers
                 NetErrorInfo? netErrorInfo = null;
                 //Add one more max client to send the full lobby message
                 netService.StartENetHost(port, maxPlayers + 1);
-                Log.Info($"HostGame open on port:{port}");
+                Log.Info($"[LanMultiplayer-MS] HostGame open on port:{port}");
                 if (!netErrorInfo.HasValue)
                 {
                     switch (gameMode)
                     {
                         case GameMode.Standard:
-                        {
-                            var submenuType3 = stack.GetSubmenuType<NCharacterSelectScreen>();
-                            submenuType3.InitializeMultiplayerAsHost(netService, maxPlayers);
-                            stack.Push(submenuType3);
-                            break;
-                        }
+                            {
+                                var submenuType3 = stack.GetSubmenuType<NCharacterSelectScreen>();
+                                submenuType3.InitializeMultiplayerAsHost(netService, maxPlayers);
+                                stack.Push(submenuType3);
+                                break;
+                            }
                         case GameMode.Daily:
-                        {
-                            var submenuType2 = stack.GetSubmenuType<NDailyRunScreen>();
-                            submenuType2.InitializeMultiplayerAsHost(netService);
-                            stack.Push(submenuType2);
-                            break;
-                        }
+                            {
+                                var submenuType2 = stack.GetSubmenuType<NDailyRunScreen>();
+                                submenuType2.InitializeMultiplayerAsHost(netService);
+                                stack.Push(submenuType2);
+                                break;
+                            }
                         default:
-                        {
-                            var submenuType = stack.GetSubmenuType<NCustomRunScreen>();
-                            submenuType.InitializeMultiplayerAsHost(netService, maxPlayers);
-                            stack.Push(submenuType);
-                            break;
-                        }
+                            {
+                                var submenuType = stack.GetSubmenuType<NCustomRunScreen>();
+                                submenuType.InitializeMultiplayerAsHost(netService, maxPlayers);
+                                stack.Push(submenuType);
+                                break;
+                            }
                     }
                 }
                 else
@@ -107,7 +107,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers
                 var netService = new NetHostGameService();
                 NetErrorInfo? netErrorInfo = null;
                 netService.StartENetHost(port, maxPlayers + 1);
-                Log.Info($"HostGame open on port:{port}");
+                Log.Info($"[LanMultiplayer-MS] HostGame open on port:{port}");
                 if (!netErrorInfo.HasValue)
                 {
                     if (run.Modifiers.Count > 0)

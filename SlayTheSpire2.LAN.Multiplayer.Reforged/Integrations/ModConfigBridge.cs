@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using Godot;
+using MegaCrit.Sts2.Core.Logging;
 using SlayTheSpire2.LAN.Multiplayer.Reforged.Components;
 using SlayTheSpire2.LAN.Multiplayer.Reforged.Models;
 using SlayTheSpire2.LAN.Multiplayer.Reforged.Services;
@@ -15,7 +16,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
     /// </summary>
     internal static class ModConfigBridge
     {
-        private const string ModId = "SlayTheSpire2.LAN.Multiplayer.Reforged";
+        private const string ModId = "LanMultiplayer-MS";
         private const int MaxDetectionAttempts = 120;
 
         internal const string DefaultAddressKey = "defaultAddress";
@@ -51,7 +52,8 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
             if (Engine.GetMainLoop() is not SceneTree tree)
                 return;
 
-            tree.ProcessFrame -= OnNextFrame;
+            if (tree.IsConnected(SceneTree.SignalName.ProcessFrame, Callable.From(OnNextFrame)))
+                tree.ProcessFrame -= OnNextFrame;
             tree.ProcessFrame += OnNextFrame;
         }
 
@@ -132,11 +134,11 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
 
                 _registered = true;
                 ApplyPersistedValues();
-                GD.Print("[SlayTheSpire2.LAN.Multiplayer.Reforged] Registered with ModConfig.");
+                Log.Info("[LanMultiplayer-MS] Registered with ModConfig.");
             }
             catch (Exception exception)
             {
-                GD.PrintErr($"[SlayTheSpire2.LAN.Multiplayer.Reforged] ModConfig registration failed: {exception}");
+                Log.Error($"[LanMultiplayer-MS] ModConfig registration failed: {exception}");
             }
         }
 
@@ -338,8 +340,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Integrations
             }
             catch (Exception exception)
             {
-                GD.PrintErr(
-                    $"[SlayTheSpire2.LAN.Multiplayer.Reforged] Failed to sync ModConfig value {key}: {exception}");
+                Log.Error($"[LanMultiplayer-MS] Failed to sync ModConfig value {key}: {exception}");
             }
         }
 

@@ -15,10 +15,14 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Models
         [JsonPropertyName("remember_join_address")] public bool RememberJoinAddress { get; set; } = true;
         [JsonPropertyName("connect_timeout_seconds")] public int ConnectTimeoutSeconds { get; set; } = 10;
         [JsonPropertyName("net_id")] public ulong NetId { get; set; } = 1000u;
-        [JsonPropertyName("player_name")] public string PlayerName { get; set; } = SteamFriends.GetPersonaName();
+        [JsonPropertyName("player_name")] public string PlayerName { get; set; } = GetDefaultPlayerName();
 
         public int SchemaVersion { get; set; }
+
+        private static string GetDefaultPlayerName()
+        {
+            try { return SteamFriends.GetPersonaName(); }
+            catch { return "Player"; }
+        }
     }
 }
-
-
