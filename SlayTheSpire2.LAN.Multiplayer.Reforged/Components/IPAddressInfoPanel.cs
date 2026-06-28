@@ -54,14 +54,18 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
             ipAddressInfoPanel.AddChildSafely(content);
 
             var menu = new Control
-                { Name = "Menu", CustomMinimumSize = new Vector2(300, 24), MouseFilter = MouseFilterEnum.Pass };
+            { Name = "Menu", CustomMinimumSize = new Vector2(300, 24), MouseFilter = MouseFilterEnum.Pass };
             content.AddChildSafely(menu);
 
             var background = new NinePatchRect
             {
-                Name = "Background", MouseFilter = MouseFilterEnum.Ignore,
-                Texture = GD.Load<CompressedTexture2D>("res://images/ui/tiny_nine_patch.png"), PatchMarginLeft = 12,
-                PatchMarginTop = 12, PatchMarginRight = 12, PatchMarginBottom = 12,
+                Name = "Background",
+                MouseFilter = MouseFilterEnum.Ignore,
+                Texture = GD.Load<CompressedTexture2D>("res://images/ui/tiny_nine_patch.png"),
+                PatchMarginLeft = 12,
+                PatchMarginTop = 12,
+                PatchMarginRight = 12,
+                PatchMarginBottom = 12,
                 Modulate = new Color(Colors.Black, 0.471f)
             };
 
@@ -83,13 +87,19 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
             menuIcon.OffsetBottom = 12;
 
             var box = new PanelContainer
-                { Name = "Box", MouseFilter = MouseFilterEnum.Ignore, Modulate = new Color(Colors.White, 0) };
+            { Name = "Box", MouseFilter = MouseFilterEnum.Ignore, Modulate = new Color(Colors.White, 0) };
 
             var styleBox = new StyleBoxTexture
             {
-                Texture = GD.Load<CompressedTexture2D>("res://images/ui/tiny_nine_patch.png"), TextureMarginLeft = 12,
-                TextureMarginTop = 12, TextureMarginRight = 12, TextureMarginBottom = 12, ContentMarginLeft = 12,
-                ContentMarginTop = 12, ContentMarginRight = 12, ContentMarginBottom = 12,
+                Texture = GD.Load<CompressedTexture2D>("res://images/ui/tiny_nine_patch.png"),
+                TextureMarginLeft = 12,
+                TextureMarginTop = 12,
+                TextureMarginRight = 12,
+                TextureMarginBottom = 12,
+                ContentMarginLeft = 12,
+                ContentMarginTop = 12,
+                ContentMarginRight = 12,
+                ContentMarginBottom = 12,
                 ModulateColor = new Color(Colors.Black, 0.471f)
             };
 
@@ -98,14 +108,16 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
 
             var container = new VBoxContainer
             {
-                Name = "Container", MouseFilter = MouseFilterEnum.Ignore, Alignment = BoxContainer.AlignmentMode.Center
+                Name = "Container",
+                MouseFilter = MouseFilterEnum.Ignore,
+                Alignment = BoxContainer.AlignmentMode.Center
             };
             container.AddThemeConstantOverride("separation", 8);
             box.AddChildSafely(container);
             container.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
             var loading = new Control
-                { Name = "Loading", CustomMinimumSize = new Vector2(64, 64), MouseFilter = MouseFilterEnum.Ignore };
+            { Name = "Loading", CustomMinimumSize = new Vector2(64, 64), MouseFilter = MouseFilterEnum.Ignore };
             container.AddChildSafely(loading);
 
             var loadingIcon = new LoadingIcon { MouseFilter = MouseFilterEnum.Ignore };
@@ -131,7 +143,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
         private static void AddAddressElement(Node container, string name, string locKeyPrefix, bool isTrim)
         {
             var addressElement = new HBoxContainer
-                { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
+            { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
 
             var ipAddressTitleLabel = new IPAddressLabel { Name = "TitleLabel", MouseFilter = MouseFilterEnum.Ignore };
             addressElement.AddChildSafely(ipAddressTitleLabel);
@@ -153,16 +165,18 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
         private static void AddAddressContainer(Node container, string name, string locKeyPrefix)
         {
             var addressElement = new VBoxContainer
-                { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
+            { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
 
             var ipAddressTitleLabel = new IPAddressLabel
-                { Name = "TitleLabel", HorizontalAlignment = HorizontalAlignment.Center };
+            { Name = "TitleLabel", HorizontalAlignment = HorizontalAlignment.Center };
             addressElement.AddChildSafely(ipAddressTitleLabel);
             ipAddressTitleLabel.SetLocalization(locKeyPrefix);
 
             var vBoxContainer = new VBoxContainer
             {
-                Name = "Container", MouseFilter = MouseFilterEnum.Ignore, Alignment = BoxContainer.AlignmentMode.Center
+                Name = "Container",
+                MouseFilter = MouseFilterEnum.Ignore,
+                Alignment = BoxContainer.AlignmentMode.Center
             };
 
             addressElement.AddChildSafely(vBoxContainer);
@@ -253,7 +267,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
             if (_ipAddress == null || _localIPAddress == null || _ipv6Address == null || _loading == null ||
                 _content == null || _localIPAddressContainer == null)
             {
-                Log.Error($"{nameof(IPAddressInfoPanel)} has null element");
+                Log.Error($"[LanMultiplayer-MS] {nameof(IPAddressInfoPanel)} has null element");
                 return;
             }
 
@@ -286,11 +300,11 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
             }
             catch (OperationCanceledException ex)
             {
-                Log.Debug(ex.Message);
+                Log.Debug($"[LanMultiplayer-MS] " + ex.Message);
             }
             catch (Exception ex)
             {
-                Log.Warn(ex.Message);
+                Log.Warn($"[LanMultiplayer-MS] " + ex.Message);
             }
 
             var hasLocalIPAddress = false;
@@ -300,7 +314,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
                 if (localIPAddress != ipAddress)
                 {
                     var ipAddressLabel = new IPAddressLabel
-                        { MouseFilter = MouseFilterEnum.Pass, HorizontalAlignment = HorizontalAlignment.Center };
+                    { MouseFilter = MouseFilterEnum.Pass, HorizontalAlignment = HorizontalAlignment.Center };
 
                     ipAddressLabel.SetTextAutoSize($"{localIPAddress}:{port}");
 
@@ -333,11 +347,11 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Components
             }
             catch (OperationCanceledException ex)
             {
-                Log.Debug(ex.Message);
+                Log.Debug("$[LanMultiplayer-MS] " + ex.Message);
             }
             catch (Exception ex)
             {
-                Log.Warn(ex.Message);
+                Log.Warn("$[LanMultiplayer-MS] " + ex.Message);
             }
 
             _loading.Visible = false;

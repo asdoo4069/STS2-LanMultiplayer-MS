@@ -59,10 +59,10 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Services
                 }
                 catch (Exception value)
                 {
-                    Log.Error($"Multiplayer run save validation failed: {value}");
+                    Log.Error($"[LanMultiplayer-MS] Multiplayer run save validation failed: {value}");
                     RenameBrokenMultiplayerRunSave(ReadSaveStatus.ValidationFailed);
                     return new ReadSaveResult<SerializableRun>(ReadSaveStatus.ValidationFailed,
-                        $"Save file validation failed: {value}");
+                        $"[LanMultiplayer-MS] Save file validation failed: {value}");
                 }
             }
 
@@ -107,13 +107,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Services
                 {
                     var text = CorruptFileHandler.GenerateCorruptFilePath(CurrentMultiplayerRunSavePath, status);
                     SaveStore.RenameFile(CurrentMultiplayerRunSavePath, text);
-                    Log.Error(
-                        $"Corrupt multiplayer run save detected: Renamed '{CurrentMultiplayerRunSavePath}' to '{text}'");
+                    Log.Error($"[LanMultiplayer-MS] Corrupt multiplayer run save detected: Renamed '{CurrentMultiplayerRunSavePath}' to '{text}'");
                 }
             }
             catch (Exception ex)
             {
-                Log.Warn("Failed to rename broken multiplayer run save: " + ex.Message);
+                Log.Warn("[LanMultiplayer-MS] Failed to rename broken multiplayer run save: " + ex.Message);
             }
         }
     }

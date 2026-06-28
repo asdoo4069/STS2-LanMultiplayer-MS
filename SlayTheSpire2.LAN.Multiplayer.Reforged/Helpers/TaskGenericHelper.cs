@@ -20,7 +20,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers
             {
                 if (ex is not TaskCanceledException)
                 {
-                    Log.Error(ex.ToString());
+                    Log.Error($"[LanMultiplayer-MS] " + ex.ToString());
                     SentryService.CaptureException(ex);
                 }
 

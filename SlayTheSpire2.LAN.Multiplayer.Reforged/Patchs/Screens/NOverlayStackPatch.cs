@@ -22,7 +22,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             {
                 if (connection["callable"].AsCallable().Target == __instance)
                 {
-                    Log.Debug("NOverlayStack.Remove called twice, preventing crash.");
+                    Log.Debug("[LanMultiplayer-MS] NOverlayStack.Remove called twice, preventing crash.");
                     return false;
                 }
             }

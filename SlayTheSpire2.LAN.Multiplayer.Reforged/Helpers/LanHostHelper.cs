@@ -155,7 +155,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers
                     PlatformUtil.GetLocalPlayerId(PlatformType.None));
             if (!readSaveResult.Success || readSaveResult.SaveData == null)
             {
-                Log.Warn("Broken multiplayer run save detected, disabling button");
+                Log.Warn("[LanMultiplayer-MS] Broken multiplayer run save detected, disabling button");
                 nSubmenuButton.Disable();
                 var modalToCreate = NErrorPopup.Create(
                     new LocString("main_menu_ui", "INVALID_SAVE_POPUP.title"),
@@ -210,13 +210,12 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Helpers
                 }
                 catch (Exception value)
                 {
-                    Log.Error($"ERROR: Failed to upload run history/metrics: {value}");
+                    Log.Error($"[LanMultiplayer-MS] Failed to upload run history/metrics: {value}");
                 }
             }
             else
             {
-                Log.Error(
-                    $"ERROR: Failed to load multiplayer run save: status={readSaveResult.Status}. Deleting current run...");
+                Log.Error($"[LanMultiplayer-MS] Failed to load multiplayer run save: status={readSaveResult.Status}. Deleting current run...");
             }
 
             LanRunSaveManagerService.Instance.DeleteCurrentMultiplayerRun();
