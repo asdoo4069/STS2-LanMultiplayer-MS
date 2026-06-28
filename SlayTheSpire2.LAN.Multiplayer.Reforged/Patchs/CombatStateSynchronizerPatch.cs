@@ -46,10 +46,8 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs
             }
 
             var startTime = DateTime.Now;
-            var lastResendTick = DateTime.Now;
 
             const int timeoutSeconds = 30;
-            const int resendIntervalSeconds = 5;
 
             while (!syncCompletionSource.Task.IsCompleted)
             {
@@ -57,23 +55,6 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs
                 {
                     logger.Warn("Receive all sync messages timeout, skip waiting for all clients");
                     break;
-                }
-
-                if (netService.Type == NetGameType.Host &&
-                    (DateTime.Now - lastResendTick).TotalSeconds > resendIntervalSeconds && rngSet != null &&
-                    sharedRelicGrabBag != null)
-                {
-                    logger.Debug("Resend rng sync message");
-
-                    var message = new SyncRngMessage
-                    {
-                        rng = rngSet,
-                        sharedRelicGrabBag = sharedRelicGrabBag
-                    };
-
-                    netService.SendMessage(message);
-
-                    lastResendTick = DateTime.Now;
                 }
 
                 await Task.Delay(100);
