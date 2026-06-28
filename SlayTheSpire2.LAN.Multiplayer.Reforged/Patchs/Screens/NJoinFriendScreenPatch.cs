@@ -49,8 +49,10 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
 
             var addressLineEdit = new AddressLineEdit
             {
-                Name = "AddressInput", Text = SettingsService.Instance.SettingsModel.IPAddress,
-                Alignment = HorizontalAlignment.Center, CustomMinimumSize = new Vector2(300, 50),
+                Name = "AddressInput",
+                Text = SettingsService.Instance.SettingsModel.IPAddress,
+                Alignment = HorizontalAlignment.Center,
+                CustomMinimumSize = new Vector2(300, 50),
                 SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter
             };
 
@@ -102,6 +104,14 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs.Screens
             __instance.AddChildSafely(lanPanel);
         }
     }
+
+    [HarmonyPatch(typeof(NJoinFriendScreen), "FastMpJoin")]
+    internal class NJoinFriendScreenFastMpJoinPatch
+    {
+        private static bool Prefix(ref Task __result)
+        {
+            __result = Task.CompletedTask;
+            return false;
+        }
+    }
 }
-
-
