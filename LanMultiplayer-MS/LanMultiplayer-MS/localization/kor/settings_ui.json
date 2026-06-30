@@ -1,0 +1,6 @@
+{
+    "LanMultiplayerMS.HOST_PORT": "호스트 포트",
+    "LanMultiplayerMS.HOST_MAX_PLAYERS": "호스트 최대 인원",
+    "LanMultiplayerMS.PLAYER_NAME": "플레이어 이름",
+    "LanMultiplayerMS.NET_ID": "NetID"
+}

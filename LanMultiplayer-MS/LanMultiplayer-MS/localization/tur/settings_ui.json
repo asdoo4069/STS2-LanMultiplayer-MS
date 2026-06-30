@@ -1,0 +1,6 @@
+{
+    "LanMultiplayerMS.HOST_PORT": "Sunucu Portu",
+    "LanMultiplayerMS.HOST_MAX_PLAYERS": "Maksimum Oyuncu",
+    "LanMultiplayerMS.PLAYER_NAME": "Oyuncu Adı",
+    "LanMultiplayerMS.NET_ID": "NetID"
+}

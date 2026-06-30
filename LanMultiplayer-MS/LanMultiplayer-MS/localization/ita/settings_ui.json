@@ -1,0 +1,6 @@
+{
+    "LanMultiplayerMS.HOST_PORT": "Porta Host",
+    "LanMultiplayerMS.HOST_MAX_PLAYERS": "Numero massimo giocatori",
+    "LanMultiplayerMS.PLAYER_NAME": "Nome giocatore",
+    "LanMultiplayerMS.NET_ID": "NetID"
+}

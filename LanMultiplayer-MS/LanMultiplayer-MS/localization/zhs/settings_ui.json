@@ -1,0 +1,6 @@
+{
+    "LanMultiplayerMS.HOST_PORT": "主机端口",
+    "LanMultiplayerMS.HOST_MAX_PLAYERS": "主机最大玩家数",
+    "LanMultiplayerMS.PLAYER_NAME": "玩家名称",
+    "LanMultiplayerMS.NET_ID": "NetID"
+}
