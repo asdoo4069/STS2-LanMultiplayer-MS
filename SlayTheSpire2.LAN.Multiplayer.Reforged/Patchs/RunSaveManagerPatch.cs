@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Platform;
 using MegaCrit.Sts2.Core.Rooms;
@@ -18,15 +19,13 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs
     [HarmonyPatch(
         typeof(RunSaveManager),
         nameof(RunSaveManager.SaveRun),
-        new[] { typeof(AbstractRoom) }
+        [typeof(AbstractRoom)]
     )]
     internal class RunSaveManagerSaveRunPatch
     {
-        private static bool Prefix(RunSaveManager __instance, AbstractRoom? preFinishedRoom, bool ____forceSynchronous,
-            ISaveStore ____saveStore, Action? ___Saved, ref Task __result)
+        private static bool Prefix(RunSaveManager __instance, AbstractRoom? preFinishedRoom, bool ____forceSynchronous, ISaveStore ____saveStore, Action? ___Saved, ref Task __result)
         {
-            __result = TaskHelper.RunSafely(SaveRun(__instance, preFinishedRoom, ____forceSynchronous, ____saveStore,
-                ___Saved));
+            __result = TaskHelper.RunSafely(SaveRun(__instance, preFinishedRoom, ____forceSynchronous, ____saveStore, ___Saved));
 
             return false;
         }
@@ -35,8 +34,7 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs
             bool forceSynchronous,
             ISaveStore saveStore, Action? saved)
         {
-            if (!RunManager.Instance.ShouldSave || (RunManager.Instance.NetService.Type != NetGameType.Singleplayer &&
-                                                    RunManager.Instance.NetService.Type != NetGameType.Host))
+            if (!RunManager.Instance.ShouldSave || (RunManager.Instance.NetService.Type != NetGameType.Singleplayer && RunManager.Instance.NetService.Type != NetGameType.Host))
                 return;
 
             var value = RunManager.Instance.ToSave(preFinishedRoom);
@@ -85,6 +83,40 @@ namespace SlayTheSpire2.LAN.Multiplayer.Reforged.Patchs
                     playerNamesStream.ToArray());
             }
 
+            saved?.Invoke();
+        }
+    }
+
+    [HarmonyPatch(typeof(RunSaveManager), nameof(RunSaveManager.SaveRun), [typeof(SerializableRun), typeof(bool)])]
+    internal class RunSaveManagerSaveRunOverloadPatch
+    {
+        private static bool Prefix(SerializableRun? save, bool isMultiplayer, bool ____forceSynchronous, ISaveStore? ____saveStore, Action? ___Saved, ref Task __result)
+        {
+            var isLanHost = isMultiplayer && LanPlayerNameService.Instance.NetService?.Platform == PlatformType.None;
+
+            if (!isLanHost || save == null || ____saveStore == null)
+                return true;
+
+            __result = TaskHelper.RunSafely(SaveLanRun(save, ____forceSynchronous, ____saveStore, ___Saved));
+            return false;
+        }
+
+        private static async Task SaveLanRun(SerializableRun save, bool forceSynchronous, ISaveStore saveStore, Action? saved)
+        {
+            var savePath = LanRunSaveManagerService.Instance.CurrentMultiplayerRunSavePath;
+
+            using var stream = new MemoryStream();
+            if (!forceSynchronous)
+            {
+                await JsonSerializer.SerializeAsync(stream, save, JsonSerializationUtility.GetTypeInfo<SerializableRun>(), CancellationToken.None);
+            }
+            else
+            {
+                await JsonSerializer.SerializeAsync(stream, save, JsonSerializationUtility.GetTypeInfo<SerializableRun>());
+            }
+
+            stream.Seek(0L, SeekOrigin.Begin);
+            await saveStore.WriteFileAsync(savePath, stream.ToArray());
             saved?.Invoke();
         }
     }
