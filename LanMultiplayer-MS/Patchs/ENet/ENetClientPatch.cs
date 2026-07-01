@@ -50,7 +50,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                     if (cancelToken.IsCancellationRequested)
                     {
                         eNetClient.DisconnectFromHost(NetError.CancelledJoin);
-                        logger.Warn("User cancelled join flow");
+                        logger.Warn("[LanMultiplayer-MS] User cancelled join flow");
                         return null;
                     }
 
@@ -58,14 +58,14 @@ namespace LanMultiplayerMS.Patchs.ENet
                     if (timeoutTimer > SettingsService.Instance.SettingsModel.ConnectTimeoutSeconds * 1000)
                     {
                         peer.Reset();
-                        logger.Error("Connection timed out!");
+                        logger.Error("[LanMultiplayer-MS] Connection timed out!");
                         return new NetErrorInfo(NetError.Timeout, selfInitiated: false);
                     }
                 }
 
                 if (peer.GetState() != ENetPacketPeer.PeerState.Connected)
                 {
-                    logger.Error($"Connection to {ip}:{port} failed!");
+                    logger.Error($"[LanMultiplayer-MS] Connection to {ip}:{port} failed!");
                     return new NetErrorInfo(NetError.UnknownNetworkError, selfInitiated: false);
                 }
 
@@ -101,7 +101,7 @@ namespace LanMultiplayerMS.Patchs.ENet
             ENetPacketPeer peer, ENetConnection connection, ulong netId, List<ENetServiceData> bufferedPackets,
             CancellationToken cancelToken)
         {
-            logger.Info($"Sending handshake with net ID {netId}");
+            logger.Info($"[LanMultiplayer-MS] Sending handshake with net ID {netId}");
             var eNetPacket = ENetPacket.FromHandshakeRequest(new ENetHandshakeRequest
             {
                 netId = netId
@@ -114,7 +114,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                 await Task.Delay(100, cancelToken);
                 if (cancelToken.IsCancellationRequested)
                 {
-                    logger.Warn("User cancelled join flow");
+                    logger.Warn("[LanMultiplayer-MS] User cancelled join flow");
                     eNetClient.DisconnectFromHost(NetError.CancelledJoin);
                     return (null, netId);
                 }
@@ -132,21 +132,19 @@ namespace LanMultiplayerMS.Patchs.ENet
                     var eNetHandshakeResponse = LanHandshakeResponseHelper.AsLanHandshakeResponse(eNetPacket2);
                     if (eNetHandshakeResponse.netId != netId)
                     {
-                        logger.Error(
-                            $"Received net ID ({eNetHandshakeResponse.netId}) during handshake that did not match ours!");
+                        logger.Error($"[LanMultiplayer-MS] Received net ID ({eNetHandshakeResponse.netId}) during handshake that did not match ours!");
                         return (new NetErrorInfo(NetError.InternalError, selfInitiated: false), netId);
                     }
 
                     if (eNetHandshakeResponse.status == ENetHandshakeStatus.IdCollision)
                     {
-                        logger.Warn(
-                            $"NetID:{netId} already occupied, Next try host send new NetID:{eNetHandshakeResponse.newNetId}");
+                        logger.Warn($"[LanMultiplayer-MS] NetID:{netId} already occupied, Next try host send new NetID:{eNetHandshakeResponse.newNetId}");
                         return (new NetErrorInfo(NetError.Kicked, selfInitiated: false),
                             eNetHandshakeResponse.newNetId);
                     }
                     else if (eNetHandshakeResponse.status != ENetHandshakeStatus.Success)
                     {
-                        logger.Error($"Received non-success code during handshake ({eNetHandshakeResponse.status})!");
+                        logger.Error($"[LanMultiplayer-MS] Received non-success code during handshake ({eNetHandshakeResponse.status})!");
                         return (new NetErrorInfo(NetError.Kicked, selfInitiated: false), netId);
                     }
 
@@ -156,7 +154,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                 timeoutTimer += 100;
                 if (timeoutTimer > SettingsService.Instance.SettingsModel.ConnectTimeoutSeconds * 1000)
                 {
-                    logger.Error("Timed out waiting for handshake ack!");
+                    logger.Error("[LanMultiplayer-MS] Timed out waiting for handshake ack!");
                     eNetClient.DisconnectFromHost(NetError.Timeout);
                     return (new NetErrorInfo(NetError.Timeout, selfInitiated: false), netId);
                 }

@@ -4,7 +4,6 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Multiplayer;
 using MegaCrit.Sts2.Core.Multiplayer.Game;
 using MegaCrit.Sts2.Core.Multiplayer.Game.Lobby;
-using MegaCrit.Sts2.Core.Multiplayer.Messages.Game;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Logger = MegaCrit.Sts2.Core.Logging.Logger;
@@ -36,13 +35,13 @@ namespace LanMultiplayerMS.Patchs
             Dictionary<ulong, SerializablePlayer> syncData, RunState runState, RunLobby? runLobby,
             SerializableRunRngSet? rngSet, SerializableRelicGrabBag? sharedRelicGrabBag)
         {
-            logger.Debug("Waiting to receive all sync messages from all clients");
+            logger.Debug("[LanMultiplayer-MS] Waiting to receive all sync messages from all clients");
             if (netService.Type == NetGameType.Singleplayer || instance.IsDisabled)
                 return;
 
             if (syncCompletionSource == null)
             {
-                throw new InvalidOperationException("StartSync must be called before WaitForSync!");
+                throw new InvalidOperationException("[LanMultiplayer-MS] StartSync must be called before WaitForSync!");
             }
 
             var startTime = DateTime.Now;
@@ -53,7 +52,7 @@ namespace LanMultiplayerMS.Patchs
             {
                 if ((DateTime.Now - startTime).TotalSeconds > timeoutSeconds)
                 {
-                    logger.Warn("Receive all sync messages timeout, skip waiting for all clients");
+                    logger.Warn("[LanMultiplayer-MS] Receive all sync messages timeout, skip waiting for all clients");
                     break;
                 }
 
@@ -64,7 +63,7 @@ namespace LanMultiplayerMS.Patchs
             {
                 if (runLobby != null && !runLobby.ConnectedPlayerIds.Contains(syncDatum.Key))
                 {
-                    logger.Debug($"Skipping sync for disconnected player {syncDatum.Key}");
+                    logger.Debug($"[LanMultiplayer-MS] Skipping sync for disconnected player {syncDatum.Key}");
                     continue;
                 }
 
@@ -83,8 +82,7 @@ namespace LanMultiplayerMS.Patchs
                 }
                 else if (runState.Players.Count > 1)
                 {
-                    logger.Error(
-                        "There are two or more players and we are a client, but we never received the RNG set!");
+                    logger.Error("[LanMultiplayer-MS] There are two or more players and we are a client, but we never received the RNG set!");
                 }
 
                 if (sharedRelicGrabBag != null)
@@ -93,8 +91,7 @@ namespace LanMultiplayerMS.Patchs
                 }
                 else if (runState.Players.Count > 1)
                 {
-                    logger.Error(
-                        "There are two or more players and we are a client, but we never received the shared relic grab bag!");
+                    logger.Error("[LanMultiplayer-MS] There are two or more players and we are a client, but we never received the shared relic grab bag!");
                 }
             }
 

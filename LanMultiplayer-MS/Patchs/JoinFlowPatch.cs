@@ -31,8 +31,7 @@ namespace LanMultiplayerMS.Patchs
 
             var lanPlayerNameService = LanPlayerNameService.Instance;
 
-            joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService
-                .HandleLanPlayerNameResponseMessage);
+            joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService.HandleLanPlayerNameResponseMessage);
 
             await lanPlayerNameService.AttemptPlayerName(joinFlow.NetService);
 
@@ -58,8 +57,7 @@ namespace LanMultiplayerMS.Patchs
 
             var lanPlayerNameService = LanPlayerNameService.Instance;
 
-            joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService
-                .HandleLanPlayerNameResponseMessage);
+            joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService.HandleLanPlayerNameResponseMessage);
 
             await lanPlayerNameService.AttemptPlayerName(joinFlow.NetService);
 

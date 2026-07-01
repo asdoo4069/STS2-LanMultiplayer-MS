@@ -49,7 +49,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                     timeoutTimer += 100;
                     if (timeoutTimer >= 10000)
                     {
-                        logger.Error("Timed out waiting for handshake!");
+                        logger.Error("[LanMultiplayer-MS] Timed out waiting for handshake!");
                         peer.Reset();
                         return;
                     }
@@ -71,8 +71,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                     newNetId += 1000u;
                 }
 
-                logger.Info(
-                    $"Second client attempted to connect with peer ID {handshakeNetId}, disconnecting them and return new NetId:{newNetId}");
+                logger.Info($"[LanMultiplayer-MS] Second client attempted to connect with peer ID {handshakeNetId}, disconnecting them and return new NetId:{newNetId}");
 
                 var eNetPacket = LanHandshakeResponseHelper.FromLanHandshakeResponse(new ENetLanHandshakeResponse
                 {
@@ -85,7 +84,7 @@ namespace LanMultiplayerMS.Patchs.ENet
             }
             else
             {
-                logger.Debug($"Acknowledging handshake for peer with ID {handshakeNetId}");
+                logger.Debug($"[LanMultiplayer-MS] Acknowledging handshake for peer with ID {handshakeNetId}");
                 var eNetPacket2 = LanHandshakeResponseHelper.FromLanHandshakeResponse(new ENetLanHandshakeResponse
                 {
                     netId = handshakeNetId,
@@ -109,7 +108,7 @@ namespace LanMultiplayerMS.Patchs.ENet
             var error = ____connection.CreateHostBound("*", port, maxClients);
             if (error != Error.Ok)
             {
-                ____logger.Error($"Failed to create host! {error}");
+                ____logger.Error($"[LanMultiplayer-MS] Failed to create host! {error}");
                 __result = new NetErrorInfo(error);
                 return false;
             }
