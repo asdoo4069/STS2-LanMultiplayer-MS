@@ -59,6 +59,11 @@ namespace LanMultiplayerMS.Patchs
                 await Task.Delay(100);
             }
 
+            // Prefix 캡처 시점의 스냅샷은 대기 중 갱신되지 않으므로, 여기서 인스턴스 필드를 다시 읽는다.
+            var traverse = Traverse.Create(instance);
+            rngSet = traverse.Field("_rngSet").GetValue<SerializableRunRngSet?>();
+            sharedRelicGrabBag = traverse.Field("_sharedRelicGrabBag").GetValue<SerializableRelicGrabBag?>();
+
             foreach (var syncDatum in syncData)
             {
                 if (runLobby != null && !runLobby.ConnectedPlayerIds.Contains(syncDatum.Key))
@@ -96,7 +101,6 @@ namespace LanMultiplayerMS.Patchs
             }
 
             syncData.Clear();
-            var traverse = Traverse.Create(instance);
             traverse.Field("_rngSet").SetValue(null);
             traverse.Field("_sharedRelicGrabBag").SetValue(null);
             traverse.Field("_syncCompletionSource").SetValue(null);
