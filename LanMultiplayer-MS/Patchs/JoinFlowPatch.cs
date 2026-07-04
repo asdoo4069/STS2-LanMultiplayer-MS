@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Platform;
 using LanMultiplayerMS.Helpers;
 using LanMultiplayerMS.Models;
 using LanMultiplayerMS.Services;
+using MegaCrit.Sts2.Core.Logging;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
@@ -33,7 +34,15 @@ namespace LanMultiplayerMS.Patchs
 
             joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService.HandleLanPlayerNameResponseMessage);
 
-            await lanPlayerNameService.AttemptPlayerName(joinFlow.NetService);
+            _ = lanPlayerNameService.AttemptPlayerName(joinFlow.NetService)
+                .ContinueWith(t =>
+                {
+                    Log.Error($"[LanMultiplayer-MS] AttemptPlayerName failed: {t.Exception}");
+                    if (joinFlow.NetService.IsConnected)
+                    {
+                        joinFlow.NetService.Disconnect(NetError.InternalError);
+                    }
+                }, TaskContinuationOptions.OnlyOnFaulted);
 
             return result;
         }
@@ -59,7 +68,15 @@ namespace LanMultiplayerMS.Patchs
 
             joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService.HandleLanPlayerNameResponseMessage);
 
-            await lanPlayerNameService.AttemptPlayerName(joinFlow.NetService);
+            _ = lanPlayerNameService.AttemptPlayerName(joinFlow.NetService)
+                .ContinueWith(t =>
+                {
+                    Log.Error($"[LanMultiplayer-MS] AttemptPlayerName failed: {t.Exception}");
+                    if (joinFlow.NetService.IsConnected)
+                    {
+                        joinFlow.NetService.Disconnect(NetError.InternalError);
+                    }
+                }, TaskContinuationOptions.OnlyOnFaulted);
 
             return result;
         }
@@ -86,7 +103,15 @@ namespace LanMultiplayerMS.Patchs
             joinFlow.NetService.RegisterMessageHandler<LanPlayerNameResponseMessage>(lanPlayerNameService
                 .HandleLanPlayerNameResponseMessage);
 
-            await lanPlayerNameService.AttemptPlayerName(joinFlow.NetService);
+            _ = lanPlayerNameService.AttemptPlayerName(joinFlow.NetService)
+                .ContinueWith(t =>
+                {
+                    Log.Error($"[LanMultiplayer-MS] AttemptPlayerName failed: {t.Exception}");
+                    if (joinFlow.NetService.IsConnected)
+                    {
+                        joinFlow.NetService.Disconnect(NetError.InternalError);
+                    }
+                }, TaskContinuationOptions.OnlyOnFaulted);
 
             return result;
         }
