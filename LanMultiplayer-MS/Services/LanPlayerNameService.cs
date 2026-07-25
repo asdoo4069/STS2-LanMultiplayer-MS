@@ -31,13 +31,9 @@ namespace LanMultiplayerMS.Services
         public void SetHostPlayerName()
         {
             if (!PlayerNameLineEdit.GetPlayerNameIsInvalid(SettingsService.Instance.SettingsModel.PlayerName))
-            {
                 PlayerNames[1u] = SettingsService.Instance.SettingsModel.PlayerName;
-            }
             else
-            {
                 PlayerNames.Remove(1u);
-            }
         }
 
         public void SetDefaultPlayerNames()
@@ -49,11 +45,10 @@ namespace LanMultiplayerMS.Services
         {
             return !PlayerNameLineEdit.GetPlayerNameIsInvalid(SettingsService.Instance.SettingsModel.PlayerName)
                 ? new PlayerNames { { 1u, SettingsService.Instance.SettingsModel.PlayerName } }
-                : new PlayerNames();
+                : [];
         }
 
-        public void HandleLanPlayerNameResponseMessage(LanPlayerNameResponseMessage lanPlayerNameResponseMessage,
-            ulong senderId)
+        public void HandleLanPlayerNameResponseMessage(LanPlayerNameResponseMessage lanPlayerNameResponseMessage, ulong senderId)
         {
             PlayerNames = lanPlayerNameResponseMessage.playerNames;
 
@@ -62,13 +57,11 @@ namespace LanMultiplayerMS.Services
             LanPlayerNameCompletion?.SetResult(lanPlayerNameResponseMessage);
         }
 
-        public void HandleLanPlayerNameRequestMessage(LanPlayerNameRequestMessage lanPlayerNameRequestMessage,
-            ulong senderId)
+        public void HandleLanPlayerNameRequestMessage(LanPlayerNameRequestMessage lanPlayerNameRequestMessage, ulong senderId)
         {
             if (PlayerNameLineEdit.GetPlayerNameIsInvalid(lanPlayerNameRequestMessage.playerName))
             {
-                NetService?.SendMessage(
-                    new LanPlayerNameResponseMessage { playerNames = PlayerNames }, senderId);
+                NetService?.SendMessage(new LanPlayerNameResponseMessage { playerNames = PlayerNames }, senderId);
                 return;
             }
 
@@ -79,11 +72,10 @@ namespace LanMultiplayerMS.Services
             NetService?.SendMessage(new LanPlayerNameResponseMessage { playerNames = PlayerNames });
         }
 
-        public async Task AttemptPlayerName(NetClientGameService gameService)
+        public async Task AttemptPlayerName(INetClientGameService gameService)
         {
             LanPlayerNameCompletion = new TaskCompletionSource<LanPlayerNameResponseMessage>();
-            var message = new LanPlayerNameRequestMessage
-            { playerName = SettingsService.Instance.SettingsModel.PlayerName };
+            var message = new LanPlayerNameRequestMessage { playerName = SettingsService.Instance.SettingsModel.PlayerName };
             gameService.SendMessage(message);
             await LanPlayerNameCompletion.Task;
             LanPlayerNameCompletion = null;
@@ -94,40 +86,27 @@ namespace LanMultiplayerMS.Services
             var runScreenService = RunScreenService.Instance;
 
             if (runScreenService.CharacterSelectScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.CharacterSelectScreen);
-            }
 
             if (runScreenService.DailyRunScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.DailyRunScreen);
-            }
 
             if (runScreenService.CustomRunScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.CustomRunScreen);
-            }
 
             if (runScreenService.MultiplayerLoadGameScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.MultiplayerLoadGameScreen);
-            }
 
             if (runScreenService.DailyRunLoadScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.DailyRunLoadScreen);
-            }
 
             if (runScreenService.CustomRunLoadScreen != null)
-            {
                 UpdateNameplateLabel(runScreenService.CustomRunLoadScreen);
-            }
         }
 
         private static void UpdateNameplateLabel(Control container)
         {
-            var nodes = Traverse.Create(container).Field("_remotePlayerContainer")
-                .Field("_nodes").GetValue<List<NRemoteLobbyPlayer>>();
+            var nodes = Traverse.Create(container).Field("_remotePlayerContainer").Field("_nodes").GetValue<List<NRemoteLobbyPlayer>>();
 
             foreach (var node in nodes)
             {
