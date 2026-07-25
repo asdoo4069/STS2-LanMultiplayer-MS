@@ -4,7 +4,6 @@ using System.Reflection;
 using Godot;
 using MegaCrit.Sts2.Core.Logging;
 using LanMultiplayerMS.Components;
-using LanMultiplayerMS.Models;
 using LanMultiplayerMS.Services;
 
 namespace LanMultiplayerMS.Integrations
@@ -54,6 +53,7 @@ namespace LanMultiplayerMS.Integrations
 
             if (tree.IsConnected(SceneTree.SignalName.ProcessFrame, Callable.From(OnNextFrame)))
                 tree.ProcessFrame -= OnNextFrame;
+
             tree.ProcessFrame += OnNextFrame;
         }
 
@@ -78,13 +78,11 @@ namespace LanMultiplayerMS.Integrations
         {
             try
             {
-                var allTypes = AppDomain.CurrentDomain.GetAssemblies()
-                    .SelectMany(assembly =>
+                var allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly =>
                     {
                         try { return assembly.GetTypes(); }
                         catch { return Type.EmptyTypes; }
-                    })
-                    .ToArray();
+                    }).ToArray();
 
                 _apiType = allTypes.FirstOrDefault(type => type.FullName == "ModConfig.ModConfigApi");
                 _entryType = allTypes.FirstOrDefault(type => type.FullName == "ModConfig.ConfigEntry");
@@ -148,11 +146,11 @@ namespace LanMultiplayerMS.Integrations
             var entries = new List<object>
             {
                 Entry(config =>
-            {
-                Set(config, "Label", "Connection");
-                Set(config, "Labels", L("Connection", "连接设置"));
-                Set(config, "Type", EnumValue("Header"));
-            }),
+                {
+                    Set(config, "Label", "Connection");
+                    Set(config, "Labels", L("Connection", "连接设置"));
+                    Set(config, "Type", EnumValue("Header"));
+                }),
                 Entry(config =>
                 {
                     Set(config, "Key", HostPortKey);
@@ -292,21 +290,15 @@ namespace LanMultiplayerMS.Integrations
             if (TryParsePort(portText, out var port))
                 settings.HostPort = port;
 
-            settings.HostMaxPlayers = Math.Clamp(
-                (int)MathF.Round(GetValue(HostMaxPlayersKey, (float)settings.HostMaxPlayers)),
-                2, 16);
+            settings.HostMaxPlayers = Math.Clamp((int)MathF.Round(GetValue(HostMaxPlayersKey, (float)settings.HostMaxPlayers)), 2, 16);
 
-            settings.ConnectTimeoutSeconds = Math.Clamp(
-                (int)MathF.Round(GetValue(ConnectTimeoutKey, (float)settings.ConnectTimeoutSeconds)),
-                3, 60);
+            settings.ConnectTimeoutSeconds = Math.Clamp((int)MathF.Round(GetValue(ConnectTimeoutKey, (float)settings.ConnectTimeoutSeconds)), 3, 60);
 
             var address = GetValue(DefaultAddressKey, settings.IPAddress);
             if (IsValidAddress(address))
                 settings.IPAddress = address;
 
-            settings.RememberJoinAddress = GetValue(
-                RememberAddressKey,
-                settings.RememberJoinAddress);
+            settings.RememberJoinAddress = GetValue(RememberAddressKey, settings.RememberJoinAddress);
 
             var playerName = GetValue(PlayerNameKey, settings.PlayerName);
             if (!PlayerNameLineEdit.GetPlayerNameIsInvalid(playerName))
@@ -371,9 +363,7 @@ namespace LanMultiplayerMS.Integrations
 
         private static void OnHostMaxPlayersChanged(object value)
         {
-            var maxPlayers = Math.Clamp(
-                (int)MathF.Round(Convert.ToSingle(value, CultureInfo.InvariantCulture)),
-                2, 16);
+            var maxPlayers = Math.Clamp((int)MathF.Round(Convert.ToSingle(value, CultureInfo.InvariantCulture)), 2, 16);
 
             var service = SettingsService.Instance;
             service.SettingsModel.HostMaxPlayers = maxPlayers;
@@ -382,9 +372,7 @@ namespace LanMultiplayerMS.Integrations
 
         private static void OnConnectTimeoutChanged(object value)
         {
-            var timeout = Math.Clamp(
-                (int)MathF.Round(Convert.ToSingle(value, CultureInfo.InvariantCulture)),
-                3, 60);
+            var timeout = Math.Clamp((int)MathF.Round(Convert.ToSingle(value, CultureInfo.InvariantCulture)), 3, 60);
 
             var service = SettingsService.Instance;
             service.SettingsModel.ConnectTimeoutSeconds = timeout;
@@ -434,16 +422,12 @@ namespace LanMultiplayerMS.Integrations
 
         private static bool TryParsePort(string text, out ushort port)
         {
-            return ushort.TryParse(
-                       text, NumberStyles.None, CultureInfo.InvariantCulture, out port) &&
-                   port > 0;
+            return ushort.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out port) && port > 0;
         }
 
         private static bool TryParseNetId(string text, out ulong netId)
         {
-            return ulong.TryParse(
-                       text, NumberStyles.None, CultureInfo.InvariantCulture, out netId) &&
-                   netId >= 2;
+            return ulong.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out netId) && netId >= 2;
         }
 
         private static bool IsValidAddress(string text)
@@ -454,21 +438,15 @@ namespace LanMultiplayerMS.Integrations
             if (text == "localhost")
                 return true;
 
-            if (Uri.TryCreate(text, UriKind.Absolute, out var uri) &&
-                uri.Scheme is "http" or "https")
-            {
-                return !string.IsNullOrWhiteSpace(uri.Host) &&
-                       uri.Port is >= -1 and <= ushort.MaxValue;
-            }
+            if (Uri.TryCreate(text, UriKind.Absolute, out var uri) && uri.Scheme is "http" or "https")
+                return !string.IsNullOrWhiteSpace(uri.Host) && uri.Port is >= -1 and <= ushort.MaxValue;
 
-            return IPAddress.TryParse(text, out _) ||
-                   IPEndPoint.TryParse(text, out _);
+            return IPAddress.TryParse(text, out _) || IPEndPoint.TryParse(text, out _);
         }
 
         private static string ToText(object? value)
         {
-            return Convert.ToString(value, CultureInfo.InvariantCulture)?.Trim() ??
-                   string.Empty;
+            return Convert.ToString(value, CultureInfo.InvariantCulture)?.Trim() ?? string.Empty;
         }
 
         private static object Entry(Action<object> configure)

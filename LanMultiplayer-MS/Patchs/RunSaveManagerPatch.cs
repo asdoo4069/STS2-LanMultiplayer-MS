@@ -44,7 +44,7 @@ namespace LanMultiplayerMS.Patchs
 
             var savePath = isMultiplayer
                 ? isNonePlatform
-                    ? LanRunSaveManagerService.Instance.CurrentMultiplayerRunSavePath
+                    ? LanRunSaveManagerService.CurrentMultiplayerRunSavePath
                     : Traverse.Create(runSaveManager).Property("CurrentMultiplayerRunSavePath").GetValue<string>()
                 : Traverse.Create(runSaveManager).Property("CurrentRunSavePath").GetValue<string>();
             using var stream = new MemoryStream();
@@ -79,7 +79,7 @@ namespace LanMultiplayerMS.Patchs
                 }
 
                 playerNamesStream.Seek(0L, SeekOrigin.Begin);
-                await saveStore.WriteFileAsync(LanRunSaveManagerService.Instance.CurrentMultiplayerRunPlayerNamesPath,
+                await saveStore.WriteFileAsync(LanRunSaveManagerService.CurrentMultiplayerRunPlayerNamesPath,
                     playerNamesStream.ToArray());
             }
 
@@ -103,7 +103,7 @@ namespace LanMultiplayerMS.Patchs
 
         private static async Task SaveLanRun(SerializableRun save, bool forceSynchronous, ISaveStore saveStore, Action? saved)
         {
-            var savePath = LanRunSaveManagerService.Instance.CurrentMultiplayerRunSavePath;
+            var savePath = LanRunSaveManagerService.CurrentMultiplayerRunSavePath;
 
             using var stream = new MemoryStream();
             if (!forceSynchronous)

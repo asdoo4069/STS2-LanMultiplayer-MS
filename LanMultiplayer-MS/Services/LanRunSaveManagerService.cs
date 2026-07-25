@@ -19,26 +19,26 @@ namespace LanMultiplayerMS.Services
 
         public static LanRunSaveManagerService Instance => Lazy.Value;
 
-        private SaveManager ProfileIdProvider => SaveManager.Instance;
+        private static SaveManager ProfileIdProvider => SaveManager.Instance;
 
-        private ISaveStore SaveStore => Traverse.Create(ProfileIdProvider).Field("_saveStore").GetValue<ISaveStore>();
+        private static ISaveStore SaveStore => Traverse.Create(ProfileIdProvider).Field("_saveStore").GetValue<ISaveStore>();
 
-        private MigrationManager MigrationManager => Traverse.Create(ProfileIdProvider).Field("_migrationManager")
+        private static MigrationManager MigrationManager => Traverse.Create(ProfileIdProvider).Field("_migrationManager")
             .GetValue<MigrationManager>();
 
-        public string CurrentMultiplayerRunSavePath =>
+        public static string CurrentMultiplayerRunSavePath =>
             RunSaveManager.GetRunSavePath(ProfileIdProvider.CurrentProfileId, "current_lan_run_mp.save");
 
-        public string CurrentMultiplayerRunPlayerNamesPath =>
+        public static string CurrentMultiplayerRunPlayerNamesPath =>
             RunSaveManager.GetRunSavePath(ProfileIdProvider.CurrentProfileId, "current_lan_run_mp_player_names.json");
 
-        public bool HasMultiplayerRunSave => SaveStore.FileExists(CurrentMultiplayerRunSavePath);
+        public static bool HasMultiplayerRunSave => SaveStore.FileExists(CurrentMultiplayerRunSavePath);
 
         private LanRunSaveManagerService()
         {
         }
 
-        public ReadSaveResult<SerializableRun> LoadAndCanonicalizeMultiplayerRunSave(ulong localPlayerId)
+        public static ReadSaveResult<SerializableRun> LoadAndCanonicalizeMultiplayerRunSave(ulong localPlayerId)
         {
             var readSaveResult = LoadMultiplayerRunSave();
             if (readSaveResult is { Success: true, SaveData: not null })
@@ -69,7 +69,7 @@ namespace LanMultiplayerMS.Services
             return readSaveResult;
         }
 
-        public ReadSaveResult<SerializableRun> LoadMultiplayerRunSave()
+        public static ReadSaveResult<SerializableRun> LoadMultiplayerRunSave()
         {
             var readSaveResult = MigrationManager.LoadSave<SerializableRun>(CurrentMultiplayerRunSavePath);
             if (readSaveResult.Success)
@@ -93,13 +93,13 @@ namespace LanMultiplayerMS.Services
             return readSaveResult;
         }
 
-        public void DeleteCurrentMultiplayerRun()
+        public static void DeleteCurrentMultiplayerRun()
         {
             SaveStore.DeleteFile(CurrentMultiplayerRunSavePath);
             SaveStore.DeleteFile(CurrentMultiplayerRunPlayerNamesPath);
         }
 
-        public void RenameBrokenMultiplayerRunSave(ReadSaveStatus status)
+        public static void RenameBrokenMultiplayerRunSave(ReadSaveStatus status)
         {
             try
             {

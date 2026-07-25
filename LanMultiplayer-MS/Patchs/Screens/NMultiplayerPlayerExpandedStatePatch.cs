@@ -44,13 +44,11 @@ namespace LanMultiplayerMS.Patchs.Screens
                 container.AddChildSafely(disableDrawing);
                 container.MoveChild(disableDrawing, 0);
 
-                disableDrawing.SetLabel(new LocString("gameplay_ui", "LanMultiplayerMS.DISABLE_DRAWING")
-                    .GetFormattedText());
+                disableDrawing.SetLabel(new LocString("gameplay_ui", "LanMultiplayerMS.DISABLE_DRAWING").GetFormattedText());
 
                 var lanMapDrawingsService = LanMapDrawingsService.Instance;
 
-                disableDrawing.IsTicked =
-                    lanMapDrawingsService.DisableDrawingHashSet.Contains(____player.NetId);
+                disableDrawing.IsTicked = lanMapDrawingsService.DisableDrawingHashSet.Contains(____player.NetId);
 
                 disableDrawing.Toggled += tickBox =>
                 {
@@ -66,18 +64,14 @@ namespace LanMultiplayerMS.Patchs.Screens
                         if (tickBox.IsTicked)
                         {
                             foreach (var line2D in drawViewport.GetChildren().OfType<Line2D>())
-                            {
                                 line2D.Visible = false;
-                            }
 
                             lanMapDrawingsService.DisableDrawingHashSet.Add(____player.NetId);
                         }
                         else
                         {
                             foreach (var line2D in drawViewport.GetChildren().OfType<Line2D>())
-                            {
                                 line2D.Visible = true;
-                            }
 
                             lanMapDrawingsService.DisableDrawingHashSet.Remove(____player.NetId);
                         }

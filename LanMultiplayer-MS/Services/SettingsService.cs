@@ -25,15 +25,12 @@ namespace LanMultiplayerMS.Services
                     new SettingsModel();
             }
             else
-            {
                 SettingsModel = new SettingsModel();
-            }
         }
 
         public void WriteSettings()
         {
-            _modsDir.WriteFile("lan_settings.json",
-                JsonSerializer.Serialize(SettingsModel, SettingsModelContext.Default.SettingsModel));
+            _modsDir.WriteFile("lan_settings.json", JsonSerializer.Serialize(SettingsModel, SettingsModelContext.Default.SettingsModel));
 
             // QuickReload-MS 모바일 재접속을 위해 마지막 접속 IP 동기화
             var config = new ConfigFile();

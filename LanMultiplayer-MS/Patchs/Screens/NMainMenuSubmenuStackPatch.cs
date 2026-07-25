@@ -40,7 +40,6 @@ namespace LanMultiplayerMS.Patchs.Screens
                     return false;
                 }
             }
-
             return true;
         }
     }

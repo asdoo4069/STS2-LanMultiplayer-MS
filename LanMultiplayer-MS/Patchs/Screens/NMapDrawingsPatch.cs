@@ -15,9 +15,7 @@ namespace LanMultiplayerMS.Patchs.Screens
         private static void Postfix(Player player, Line2D __result)
         {
             if (LanMapDrawingsService.Instance.DisableDrawingHashSet.Contains(player.NetId))
-            {
                 __result.Visible = false;
-            }
         }
     }
 }

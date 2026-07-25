@@ -23,11 +23,9 @@ namespace LanMultiplayerMS.Patchs.ENet
         }
 
         private static bool Prefix(ENetClient __instance, ulong netId, string ip, ushort port,
-            CancellationToken cancelToken, Logger ____logger, INetClientHandler ____handler,
-            ref Task<NetErrorInfo?> __result)
+            CancellationToken cancelToken, Logger ____logger, INetClientHandler ____handler, ref Task<NetErrorInfo?> __result)
         {
-            __result = TaskGenericHelper.RunSafely(ConnectToHost(__instance, ____logger, ____handler, netId, ip, port,
-                cancelToken));
+            __result = TaskGenericHelper.RunSafely(ConnectToHost(__instance, ____logger, ____handler, netId, ip, port, cancelToken));
 
             return false;
         }
@@ -43,8 +41,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                 var peer = connection.ConnectToHost(ip, port);
                 Traverse.Create(eNetClient).Field("_peer").SetValue(peer);
                 var timeoutTimer = 0;
-                while (!connection.TryService(out var output) ||
-                       output is not { type: ENetConnection.EventType.Connect })
+                while (!connection.TryService(out var output) || output is not { type: ENetConnection.EventType.Connect })
                 {
                     await Task.Delay(100, cancelToken);
                     if (cancelToken.IsCancellationRequested)
@@ -89,23 +86,17 @@ namespace LanMultiplayerMS.Patchs.ENet
                 Traverse.Create(eNetClient).Field("_isConnected").SetValue(true);
                 handler.OnConnectedToHost();
                 foreach (var item in bufferedPackets)
-                {
                     HandleMessageReceived(eNetClient, item);
-                }
 
                 return null;
             }
         }
 
         private static async Task<(NetErrorInfo?, ulong)> SendAndWaitForNetIdAck(ENetClient eNetClient, Logger logger,
-            ENetPacketPeer peer, ENetConnection connection, ulong netId, List<ENetServiceData> bufferedPackets,
-            CancellationToken cancelToken)
+            ENetPacketPeer peer, ENetConnection connection, ulong netId, List<ENetServiceData> bufferedPackets, CancellationToken cancelToken)
         {
             logger.Info($"[LanMultiplayer-MS] Sending handshake with net ID {netId}");
-            var eNetPacket = ENetPacket.FromHandshakeRequest(new ENetHandshakeRequest
-            {
-                netId = netId
-            });
+            var eNetPacket = ENetPacket.FromHandshakeRequest(new ENetHandshakeRequest { netId = netId });
             peer.Send(0, eNetPacket.AllBytes, 1);
             var receivedAck = false;
             var timeoutTimer = 0;
@@ -139,8 +130,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                     if (eNetHandshakeResponse.status == ENetHandshakeStatus.IdCollision)
                     {
                         logger.Warn($"[LanMultiplayer-MS] NetID:{netId} already occupied, Next try host send new NetID:{eNetHandshakeResponse.newNetId}");
-                        return (new NetErrorInfo(NetError.Kicked, selfInitiated: false),
-                            eNetHandshakeResponse.newNetId);
+                        return (new NetErrorInfo(NetError.Kicked, selfInitiated: false), eNetHandshakeResponse.newNetId);
                     }
                     else if (eNetHandshakeResponse.status != ENetHandshakeStatus.Success)
                     {
@@ -159,10 +149,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                     return (new NetErrorInfo(NetError.Timeout, selfInitiated: false), netId);
                 }
             }
-
             return (null, netId);
         }
     }
 }
-
-

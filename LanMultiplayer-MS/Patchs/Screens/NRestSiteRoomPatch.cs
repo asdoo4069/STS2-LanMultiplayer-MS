@@ -13,8 +13,7 @@ namespace LanMultiplayerMS.Patchs.Screens
     [HarmonyPatch(typeof(NRestSiteRoom), "_Ready")]
     internal class NRestSiteRoomReadyPatch
     {
-        private static void Prefix(NRestSiteRoom __instance, IRunState ____runState,
-            List<Control> ____characterContainers)
+        private static void Prefix(NRestSiteRoom __instance, IRunState ____runState, List<Control> ____characterContainers)
         {
             if (____runState.Players.Count > 4)
             {
@@ -31,24 +30,16 @@ namespace LanMultiplayerMS.Patchs.Screens
                     if (i % 2 == 0)
                     {
                         if (i % 4 == 0)
-                        {
                             AddCharacter(bgContainer, ref lastLeftCharacterUp, ____characterContainers, i, true);
-                        }
                         else
-                        {
                             AddCharacter(bgContainer, ref lastLeftCharacterDown, ____characterContainers, i, true);
-                        }
                     }
                     else
                     {
                         if (i % 4 == 1)
-                        {
                             AddCharacter(bgContainer, ref lastRightCharacterUp, ____characterContainers, i, false);
-                        }
                         else
-                        {
                             AddCharacter(bgContainer, ref lastRightCharacterDown, ____characterContainers, i, false);
-                        }
                     }
                 }
             }
@@ -67,13 +58,9 @@ namespace LanMultiplayerMS.Patchs.Screens
                 for (var i = 4; i < ____runState.Players.Count; i++)
                 {
                     if (i % 2 == 0 && i % 4 == 0)
-                    {
                         AddRestSite(restSiteBackground, ref lastLeftRestSite, true);
-                    }
                     else if (i % 4 == 1)
-                    {
                         AddRestSite(restSiteBackground, ref lastRightRestSite, false);
-                    }
                 }
             }
         }
@@ -84,15 +71,13 @@ namespace LanMultiplayerMS.Patchs.Screens
 
             restSite = (Control)restSite.Duplicate();
 
-            restSite.Position = new Vector2(isLeft ? restSite.Position.X - 200 : restSite.Position.X + 200,
-                restSite.Position.Y - 50);
+            restSite.Position = new Vector2(isLeft ? restSite.Position.X - 200 : restSite.Position.X + 200, restSite.Position.Y - 50);
 
             restSiteBackground.AddChildSafely(restSite);
             restSite.MoveChild(restSite, nextRestSiteIndex);
         }
 
-        private static void AddCharacter(Node bgContainer, ref Control character, List<Control> characterContainers,
-            int index, bool isLeft)
+        private static void AddCharacter(Node bgContainer, ref Control character, List<Control> characterContainers, int index, bool isLeft)
         {
             var nextCharacterIndex = character.GetIndex() + 1;
 
@@ -100,8 +85,7 @@ namespace LanMultiplayerMS.Patchs.Screens
             character.Name = $"Character_{index + 1}";
             bgContainer.AddChildSafely(character);
             bgContainer.MoveChild(character, nextCharacterIndex);
-            character.Position = new Vector2(isLeft ? character.Position.X - 200 : character.Position.X + 200,
-                character.Position.Y - 50);
+            character.Position = new Vector2(isLeft ? character.Position.X - 200 : character.Position.X + 200, character.Position.Y - 50);
 
             characterContainers.Add(character);
         }

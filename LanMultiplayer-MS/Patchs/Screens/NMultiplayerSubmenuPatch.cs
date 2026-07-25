@@ -44,15 +44,9 @@ namespace LanMultiplayerMS.Patchs.Screens
                     var stack = traverse.Field("_stack").GetValue<NSubmenuStack>();
 
                     if (SaveManager.Instance.Progress.NumberOfRuns > 0)
-                    {
                         stack.PushSubmenuType<LanMultiplayerHostSubmenu>();
-                    }
                     else
-                    {
-                        LanHostHelper.StartHost(GameMode.Standard,
-                            traverse.Field("_loadingOverlay").GetValue<Control>(), stack, settingsModel.HostPort,
-                            settingsModel.HostMaxPlayers);
-                    }
+                        LanHostHelper.StartHost(GameMode.Standard, traverse.Field("_loadingOverlay").GetValue<Control>(), stack, settingsModel.HostPort, settingsModel.HostMaxPlayers);
                 }));
 
             LanMultiplayerSubmenuButtonService.Instance.LanHostButton = lanHostButton;
@@ -96,10 +90,7 @@ namespace LanMultiplayerMS.Patchs.Screens
             lanAbandonButtonTitle.SetTextAutoSize($"LAN {lanAbandonButtonTitle.Text}");
 
             lanAbandonButton.Connect(NClickableControl.SignalName.Released,
-                Callable.From<NButton>(_ =>
-                {
-                    TaskHelper.RunSafely(LanHostHelper.TryAbandonMultiplayerRun(__instance));
-                }));
+                Callable.From<NButton>(_ => { TaskHelper.RunSafely(LanHostHelper.TryAbandonMultiplayerRun(__instance)); }));
 
             LanMultiplayerSubmenuButtonService.Instance.LanAbandonButton = lanAbandonButton;
         }
@@ -119,22 +110,13 @@ namespace LanMultiplayerMS.Patchs.Screens
             var lanMultiplayerSubmenuButtonService = LanMultiplayerSubmenuButtonService.Instance;
 
             if (lanMultiplayerSubmenuButtonService.LanHostButton != null)
-            {
-                lanMultiplayerSubmenuButtonService.LanHostButton.Visible =
-                    !LanRunSaveManagerService.Instance.HasMultiplayerRunSave;
-            }
+                lanMultiplayerSubmenuButtonService.LanHostButton.Visible = !LanRunSaveManagerService.HasMultiplayerRunSave;
 
             if (lanMultiplayerSubmenuButtonService.LanLoadButton != null)
-            {
-                lanMultiplayerSubmenuButtonService.LanLoadButton.Visible =
-                    LanRunSaveManagerService.Instance.HasMultiplayerRunSave;
-            }
+                lanMultiplayerSubmenuButtonService.LanLoadButton.Visible = LanRunSaveManagerService.HasMultiplayerRunSave;
 
             if (lanMultiplayerSubmenuButtonService.LanAbandonButton != null)
-            {
-                lanMultiplayerSubmenuButtonService.LanAbandonButton.Visible =
-                    LanRunSaveManagerService.Instance.HasMultiplayerRunSave;
-            }
+                lanMultiplayerSubmenuButtonService.LanAbandonButton.Visible = LanRunSaveManagerService.HasMultiplayerRunSave;
         }
     }
 }

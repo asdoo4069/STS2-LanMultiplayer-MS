@@ -88,9 +88,7 @@ namespace LanMultiplayerMS.Patchs.Screens
                     ipAddressInfoPanel.Visible = true;
                 }
                 else
-                {
                     ipAddressInfoPanel.Visible = false;
-                }
             }
         }
     }
@@ -135,9 +133,7 @@ namespace LanMultiplayerMS.Patchs.Screens
         private static void Postfix(NSubmenu __instance)
         {
             if (__instance.GetNode("IPAddressPanel") is IPAddressInfoPanel ipAddressInfoPanel)
-            {
                 ipAddressInfoPanel.Visible = false;
-            }
         }
     }
 
@@ -160,9 +156,7 @@ namespace LanMultiplayerMS.Patchs.Screens
         private static void Postfix(NSubmenu __instance)
         {
             if (__instance.GetNode("IPAddressPanel") is IPAddressInfoPanel ipAddressInfoPanel)
-            {
                 ipAddressInfoPanel.Visible = false;
-            }
         }
     }
 }

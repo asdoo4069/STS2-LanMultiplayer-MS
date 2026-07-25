@@ -38,7 +38,11 @@ namespace LanMultiplayerMS.Patchs.Screens
             if (____multiplayerHolders.Count > 4)
             {
                 var gridContainer = new GridContainer
-                { Name = "RelicContainer", Columns = 4, CustomMinimumSize = new Vector2(0, 469) };
+                {
+                    Name = "RelicContainer",
+                    Columns = 4,
+                    CustomMinimumSize = new Vector2(0, 469)
+                };
 
                 gridContainer.AddThemeConstantOverride("h_separation", 42);
                 gridContainer.AddThemeConstantOverride("v_separation", 42);
@@ -60,8 +64,7 @@ namespace LanMultiplayerMS.Patchs.Screens
                 mask.OffsetRight = 450;
                 mask.OffsetBottom = 830;
 
-                var scrollbar = PreloadManager.Cache.GetScene(SceneHelper.GetScenePath("ui/scrollbar"))
-                    .Instantiate<NScrollbar>();
+                var scrollbar = PreloadManager.Cache.GetScene(SceneHelper.GetScenePath("ui/scrollbar")).Instantiate<NScrollbar>();
                 scrollbar.AnchorLeft = 0.794f;
                 scrollbar.AnchorTop = 0.187f;
                 scrollbar.AnchorRight = 0.818f;

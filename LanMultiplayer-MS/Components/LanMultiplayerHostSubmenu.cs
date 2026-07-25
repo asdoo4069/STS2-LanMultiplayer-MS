@@ -30,9 +30,7 @@ namespace LanMultiplayerMS.Components
             lanMultiplayerHostSubmenu.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
             foreach (var child in multiplayerHostSubmenu.GetChildren())
-            {
                 child.Reparent(lanMultiplayerHostSubmenu, false);
-            }
 
             multiplayerHostSubmenu.QueueFreeSafely();
 

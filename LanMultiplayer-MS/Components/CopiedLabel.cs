@@ -44,18 +44,14 @@ namespace LanMultiplayerMS.Components
 
             _tween.SetParallel();
 
-            _tween.TweenProperty(this, "position:y", Position.Y - 30, 0.3f).SetTrans(Tween.TransitionType.Cubic)
-                .SetEase(Tween.EaseType.Out);
+            _tween.TweenProperty(this, "position:y", Position.Y - 30, 0.3f).SetTrans(Tween.TransitionType.Cubic).SetEase(Tween.EaseType.Out);
 
             _tween.Chain().TweenProperty(this, "modulate:a", 0, 0.4f).SetDelay(0.8f);
         }
 
         public override void _Notification(int what)
         {
-            if ((long)what == 2010 && IsNodeReady())
-            {
-                RefreshLabel();
-            }
+            if ((long)what == 2010 && IsNodeReady()) RefreshLabel();
 
             base._Notification(what);
         }

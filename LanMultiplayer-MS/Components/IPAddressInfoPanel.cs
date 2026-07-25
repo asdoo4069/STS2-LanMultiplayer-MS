@@ -86,8 +86,7 @@ namespace LanMultiplayerMS.Components
             menuIcon.OffsetRight = 12;
             menuIcon.OffsetBottom = 12;
 
-            var box = new PanelContainer
-            { Name = "Box", MouseFilter = MouseFilterEnum.Ignore, Modulate = new Color(Colors.White, 0) };
+            var box = new PanelContainer { Name = "Box", MouseFilter = MouseFilterEnum.Ignore, Modulate = new Color(Colors.White, 0) };
 
             var styleBox = new StyleBoxTexture
             {
@@ -158,17 +157,14 @@ namespace LanMultiplayerMS.Components
             }
 
             addressElement.AddChildSafely(ipAddressLabel);
-
             container.AddChildSafely(addressElement);
         }
 
         private static void AddAddressContainer(Node container, string name, string locKeyPrefix)
         {
-            var addressElement = new VBoxContainer
-            { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
+            var addressElement = new VBoxContainer { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
 
-            var ipAddressTitleLabel = new IPAddressLabel
-            { Name = "TitleLabel", HorizontalAlignment = HorizontalAlignment.Center };
+            var ipAddressTitleLabel = new IPAddressLabel { Name = "TitleLabel", HorizontalAlignment = HorizontalAlignment.Center };
             addressElement.AddChildSafely(ipAddressTitleLabel);
             ipAddressTitleLabel.SetLocalization(locKeyPrefix);
 
@@ -180,7 +176,6 @@ namespace LanMultiplayerMS.Components
             };
 
             addressElement.AddChildSafely(vBoxContainer);
-
             container.AddChildSafely(addressElement);
         }
 
@@ -189,13 +184,10 @@ namespace LanMultiplayerMS.Components
             _content = GetNode<Control>("Content");
             _menu = GetNode<Control>("Content/Menu");
             _box = GetNode<Control>("Content/Box");
-
             _loading = GetNode<Control>("Content/Box/Container/Loading");
-
             _ipAddress = GetNode<Control>("Content/Box/Container/IPAddress");
             _ipAddressTitleLabel = _ipAddress.GetNode<IPAddressLabel>("TitleLabel");
             _ipAddressLabel = _ipAddress.GetNode<IPAddressLabel>("Label");
-
             _copiedLabel = GetNode<CopiedLabel>("CopiedLabel");
 
             _ipAddress.GuiInput += inputEvent =>
@@ -237,26 +229,21 @@ namespace LanMultiplayerMS.Components
             _menu.MouseEntered += OnMouseEntered;
             _content.MouseExited += OnMouseExited;
 
-            NControllerManager.Instance?.Connect(NControllerManager.SignalName.MouseDetected,
-                Callable.From(UpdateController));
-            NControllerManager.Instance?.Connect(NControllerManager.SignalName.ControllerDetected,
-                Callable.From(UpdateController));
+            NControllerManager.Instance?.Connect(NControllerManager.SignalName.MouseDetected, Callable.From(UpdateController));
+            NControllerManager.Instance?.Connect(NControllerManager.SignalName.ControllerDetected, Callable.From(UpdateController));
             NInputManager.Instance?.Connect(NInputManager.SignalName.InputRebound, Callable.From(UpdateController));
         }
 
         private void UpdateController()
         {
             if (NControllerManager.Instance?.IsUsingController ?? false)
-            {
                 ShowBox();
-            }
         }
 
         public void Initialize()
         {
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource?.Dispose();
-
             _cancellationTokenSource = new CancellationTokenSource();
 
             TaskHelper.RunSafely(InitializeAsync(_cancellationTokenSource.Token));
@@ -264,8 +251,7 @@ namespace LanMultiplayerMS.Components
 
         private async Task InitializeAsync(CancellationToken cancellationToken)
         {
-            if (_ipAddress == null || _localIPAddress == null || _ipv6Address == null || _loading == null ||
-                _content == null || _localIPAddressContainer == null)
+            if (_ipAddress == null || _localIPAddress == null || _ipv6Address == null || _loading == null || _content == null || _localIPAddressContainer == null)
             {
                 Log.Error($"[LanMultiplayer-MS] {nameof(IPAddressInfoPanel)} has null element");
                 return;
@@ -275,10 +261,7 @@ namespace LanMultiplayerMS.Components
             _localIPAddress.Visible = false;
             _ipv6Address.Visible = false;
 
-            foreach (var child in _localIPAddressContainer.GetChildren())
-            {
-                child.QueueFreeSafely();
-            }
+            foreach (var child in _localIPAddressContainer.GetChildren()) child.QueueFreeSafely();
 
             _loading.Visible = true;
 
@@ -322,11 +305,7 @@ namespace LanMultiplayerMS.Components
 
                     ipAddressLabel.GuiInput += inputEvent =>
                     {
-                        if (inputEvent is InputEventMouseButton
-                            {
-                                ButtonIndex: MouseButton.Left, Pressed: true
-                            } inputEventMouseButton &&
-                            !string.IsNullOrEmpty(ipAddressLabel.Text))
+                        if (inputEvent is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } inputEventMouseButton && !string.IsNullOrEmpty(ipAddressLabel.Text))
                         {
                             DisplayServer.ClipboardSet(ipAddressLabel.Text);
                             _copiedLabel?.Show(inputEventMouseButton.GlobalPosition);
@@ -347,15 +326,14 @@ namespace LanMultiplayerMS.Components
             }
             catch (OperationCanceledException ex)
             {
-                Log.Debug("$[LanMultiplayer-MS] " + ex.Message);
+                Log.Debug($"[LanMultiplayer-MS] " + ex.Message);
             }
             catch (Exception ex)
             {
-                Log.Warn("$[LanMultiplayer-MS] " + ex.Message);
+                Log.Warn($"[LanMultiplayer-MS] " + ex.Message);
             }
 
             _loading.Visible = false;
-
             _ipAddress.Visible = hasIPAddress;
             _localIPAddress.Visible = hasLocalIPAddress;
             _ipv6Address.Visible = hasIPV6Address;
@@ -367,8 +345,7 @@ namespace LanMultiplayerMS.Components
         {
             foreach (var networkInterface in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (networkInterface.OperationalStatus == OperationalStatus.Up &&
-                    networkInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback)
+                if (networkInterface.OperationalStatus == OperationalStatus.Up && networkInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback)
                 {
                     if (networkInterface.Name.Contains("vEthernet"))
                         continue;

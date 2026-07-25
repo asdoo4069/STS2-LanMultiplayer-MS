@@ -119,7 +119,7 @@ namespace LanMultiplayerMS.Patchs
                                 SaveManager.Instance.DeleteCurrentRun();
                                 break;
                             case NetGameType.Host:
-                                LanRunSaveManagerService.Instance.DeleteCurrentMultiplayerRun();
+                                LanRunSaveManagerService.DeleteCurrentMultiplayerRun();
                                 break;
                             case NetGameType.None:
                             case NetGameType.Client:

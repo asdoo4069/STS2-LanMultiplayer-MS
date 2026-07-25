@@ -16,9 +16,7 @@ namespace LanMultiplayerMS.Patchs.Messages
         private static bool Prefix(LobbyBeginRunMessage __instance, PacketWriter writer)
         {
             if (__instance.playersInLobby == null)
-            {
                 throw new InvalidOperationException("Tried to serialize ClientSlotGrantedMessage with null list!");
-            }
 
             PacketHelper.WriteList(writer, __instance.playersInLobby);
             writer.WriteString(__instance.seed);

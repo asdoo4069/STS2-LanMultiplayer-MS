@@ -32,7 +32,7 @@ namespace LanMultiplayerMS.Helpers
         {
             UpdateButtons = AccessTools.MethodDelegate<Action<NMultiplayerSubmenu>>(
                 typeof(NMultiplayerSubmenu).GetMethod("UpdateButtons",
-                    BindingFlags.Instance | BindingFlags.NonPublic)!);
+                    BindingFlags.Instance | BindingFlags.NonPublic));
         }
 
         public static void StartHost(GameMode gameMode, Control loadingOverlay, NSubmenuStack stack, ushort port,
@@ -77,18 +77,14 @@ namespace LanMultiplayerMS.Helpers
                 {
                     var nErrorPopup = NErrorPopup.Create(netErrorInfo.Value);
                     if (nErrorPopup != null)
-                    {
                         NModalContainer.Instance?.Add(nErrorPopup);
-                    }
                 }
             }
             catch
             {
                 var nErrorPopup2 = NErrorPopup.Create(new NetErrorInfo(NetError.InternalError, selfInitiated: false));
                 if (nErrorPopup2 != null)
-                {
                     NModalContainer.Instance?.Add(nErrorPopup2);
-                }
 
                 throw;
             }
@@ -98,8 +94,7 @@ namespace LanMultiplayerMS.Helpers
             }
         }
 
-        public static void StartHost(SerializableRun run, Control loadingOverlay, NSubmenuStack stack, ushort port,
-            int maxPlayers)
+        public static void StartHost(SerializableRun run, Control loadingOverlay, NSubmenuStack stack, ushort port, int maxPlayers)
         {
             loadingOverlay.Visible = true;
             try
@@ -136,9 +131,7 @@ namespace LanMultiplayerMS.Helpers
                 {
                     var nErrorPopup = NErrorPopup.Create(netErrorInfo.Value);
                     if (nErrorPopup != null)
-                    {
                         NModalContainer.Instance?.Add(nErrorPopup);
-                    }
                 }
             }
             finally
@@ -147,11 +140,10 @@ namespace LanMultiplayerMS.Helpers
             }
         }
 
-        public static void StartLoad(NSubmenuButton nSubmenuButton, Control loadingOverlay, NSubmenuStack stack,
-            ushort port, int maxPlayers)
+        public static void StartLoad(NSubmenuButton nSubmenuButton, Control loadingOverlay, NSubmenuStack stack, ushort port, int maxPlayers)
         {
             var readSaveResult =
-                LanRunSaveManagerService.Instance.LoadAndCanonicalizeMultiplayerRunSave(
+                LanRunSaveManagerService.LoadAndCanonicalizeMultiplayerRunSave(
                     PlatformUtil.GetLocalPlayerId(PlatformType.None));
             if (!readSaveResult.Success || readSaveResult.SaveData == null)
             {
@@ -161,17 +153,14 @@ namespace LanMultiplayerMS.Helpers
                     new LocString("main_menu_ui", "INVALID_SAVE_POPUP.title"),
                     new LocString("main_menu_ui", "INVALID_SAVE_POPUP.description_run"),
                     new LocString("main_menu_ui", "INVALID_SAVE_POPUP.dismiss"), showReportBugButton: true);
+
                 if (modalToCreate != null)
-                {
                     NModalContainer.Instance?.Add(modalToCreate);
-                }
 
                 NModalContainer.Instance?.ShowBackstop();
             }
             else
-            {
                 StartHost(readSaveResult.SaveData, loadingOverlay, stack, port, maxPlayers);
-            }
         }
 
         public static async Task TryAbandonMultiplayerRun(NMultiplayerSubmenu instance)
@@ -182,30 +171,24 @@ namespace LanMultiplayerMS.Helpers
             var noButton = new LocString("main_menu_ui", "GENERIC_POPUP.cancel");
             var nGenericPopup = NGenericPopup.Create();
             if (nGenericPopup != null)
-            {
                 NModalContainer.Instance?.Add(nGenericPopup);
-            }
 
             if (nGenericPopup == null || !await nGenericPopup.WaitForConfirmation(body, header, noButton, yesButton))
                 return;
 
-            var readSaveResult =
-                LanRunSaveManagerService.Instance.LoadAndCanonicalizeMultiplayerRunSave(
-                    PlatformUtil.GetLocalPlayerId(PlatformType.None));
+            var readSaveResult = LanRunSaveManagerService.LoadAndCanonicalizeMultiplayerRunSave(PlatformUtil.GetLocalPlayerId(PlatformType.None));
             if (readSaveResult is { Success: true, SaveData: not null })
             {
                 try
                 {
                     var saveData = readSaveResult.SaveData;
                     SaveManager.Instance.UpdateProgressWithRunData(saveData, victory: false);
-                    RunHistoryUtilities.CreateRunHistoryEntry(saveData, victory: false, isAbandoned: true,
-                        saveData.PlatformType);
+                    RunHistoryUtilities.CreateRunHistoryEntry(saveData, victory: false, isAbandoned: true, saveData.PlatformType);
                     if (saveData.DailyTime.HasValue)
                     {
                         PlatformUtil.GetLocalPlayerId(saveData.PlatformType);
                         var score = ScoreUtility.CalculateScore(saveData, won: false);
-                        _ = TaskHelper.RunSafely(DailyRunUtility.UploadScore(saveData.DailyTime.Value, score,
-                            saveData.Players));
+                        _ = TaskHelper.RunSafely(DailyRunUtility.UploadScore(saveData.DailyTime.Value, score, saveData.Players));
                     }
                 }
                 catch (Exception value)
@@ -214,11 +197,9 @@ namespace LanMultiplayerMS.Helpers
                 }
             }
             else
-            {
                 Log.Error($"[LanMultiplayer-MS] Failed to load multiplayer run save: status={readSaveResult.Status}. Deleting current run...");
-            }
 
-            LanRunSaveManagerService.Instance.DeleteCurrentMultiplayerRun();
+            LanRunSaveManagerService.DeleteCurrentMultiplayerRun();
             UpdateButtons(instance);
         }
     }

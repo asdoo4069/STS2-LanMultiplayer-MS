@@ -20,14 +20,12 @@ namespace LanMultiplayerMS.Patchs.ENet
         private static bool Prefix(ENetHost __instance, ENetPacketPeer peer, Logger ____logger,
             IList ____receivedHandshakes, IList ____connectedPeers, INetHostHandler ____handler, ref Task __result)
         {
-            __result = TaskHelper.RunSafely(DoClientHandshake(__instance, ____logger, ____receivedHandshakes,
-                ____connectedPeers, ____handler, peer));
+            __result = TaskHelper.RunSafely(DoClientHandshake(__instance, ____logger, ____receivedHandshakes, ____connectedPeers, ____handler, peer));
 
             return false;
         }
 
-        private static async Task DoClientHandshake(ENetHost eNetHost, Logger logger, IList receivedHandshakes,
-            IList connectedPeers, INetHostHandler handler, ENetPacketPeer peer)
+        private static async Task DoClientHandshake(ENetHost eNetHost, Logger logger, IList receivedHandshakes, IList connectedPeers, INetHostHandler handler, ENetPacketPeer peer)
         {
             peer.SetTimeout(24, 20000, 20000);
             var timeoutTimer = 0;
@@ -67,9 +65,7 @@ namespace LanMultiplayerMS.Patchs.ENet
                 var newNetId = 1000u;
 
                 while (connectedPeerIdHashSet.Contains(newNetId))
-                {
                     newNetId += 1000u;
-                }
 
                 logger.Info($"[LanMultiplayer-MS] Second client attempted to connect with peer ID {handshakeNetId}, disconnecting them and return new NetId:{newNetId}");
 
@@ -101,8 +97,7 @@ namespace LanMultiplayerMS.Patchs.ENet
     [HarmonyPatch(typeof(ENetHost), "StartHost")]
     internal class ENetHostStartHostPatch
     {
-        private static bool Prefix(ushort port, int maxClients, Logger ____logger, ref ENetConnection? ____connection,
-            ref bool ____isConnected, ref NetErrorInfo? __result)
+        private static bool Prefix(ushort port, int maxClients, Logger ____logger, ref ENetConnection? ____connection, ref bool ____isConnected, ref NetErrorInfo? __result)
         {
             ____connection = new ENetConnection();
             var error = ____connection.CreateHostBound("*", port, maxClients);

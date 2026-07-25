@@ -27,33 +27,28 @@ namespace LanMultiplayerMS.Helpers
             SetPacketWriterBitPosition =
                 AccessTools.MethodDelegate<Action<PacketWriter, int>>(typeof(PacketWriter)
                     .GetProperty("BitPosition", flags)
-                    ?.SetMethod!);
+                    ?.SetMethod);
             SetPacketReaderBitPosition =
                 AccessTools.MethodDelegate<Action<PacketReader, int>>(typeof(PacketReader)
                     .GetProperty("BitPosition", flags)
-                    ?.SetMethod!);
+                    ?.SetMethod);
 
             WriteBytes = AccessTools.MethodDelegate<Action<byte[], byte[], int, int>>(AccessTools
                 .TypeByName("MegaCrit.Sts2.Core.Multiplayer.Serialization.BitSerializationUtil")
-                .GetMethod("WriteBytes", flags)!);
+                .GetMethod("WriteBytes", flags));
             ReadBits = AccessTools.MethodDelegate<Action<byte[], int, byte[], int>>(AccessTools
-                .TypeByName("MegaCrit.Sts2.Core.Multiplayer.Serialization.BitSerializationUtil").GetMethod("ReadBits",
-                    BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public)!);
+                .TypeByName("MegaCrit.Sts2.Core.Multiplayer.Serialization.BitSerializationUtil")
+                .GetMethod("ReadBits", BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public));
 
-            RefPacketWriterTempBuffer =
-                AccessTools.FieldRefAccess<PacketWriter, byte[]>("_tempBuffer");
-            RefPacketReaderTempBuffer =
-                AccessTools.FieldRefAccess<PacketReader, byte[]>("_tempBuffer");
+            RefPacketWriterTempBuffer = AccessTools.FieldRefAccess<PacketWriter, byte[]>("_tempBuffer");
+            RefPacketReaderTempBuffer = AccessTools.FieldRefAccess<PacketReader, byte[]>("_tempBuffer");
         }
 
-        public static void WriteList<T>(PacketWriter instance, IReadOnlyList<T> list)
-            where T : IPacketSerializable, new()
+        public static void WriteList<T>(PacketWriter instance, IReadOnlyList<T> list) where T : IPacketSerializable, new()
         {
             WriteVarInt(instance, (uint)list.Count);
             foreach (var item in list)
-            {
                 instance.Write(item);
-            }
         }
 
         public static void WriteVarInt(PacketWriter writer, uint val)
@@ -82,9 +77,7 @@ namespace LanMultiplayerMS.Helpers
             var list = new List<T>();
             var num = ReadVarInt(reader);
             for (var i = 0; i < num; i++)
-            {
                 list.Add(reader.Read<T>());
-            }
 
             return list;
         }
@@ -117,7 +110,6 @@ namespace LanMultiplayerMS.Helpers
                     throw new Exception("VarInt Invalid");
                 }
             }
-
             return result;
         }
     }

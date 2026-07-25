@@ -38,10 +38,7 @@ namespace LanMultiplayerMS.Patchs.Screens
             lanPanel.OffsetRight = 790;
             lanPanel.OffsetBottom = 338;
 
-            var vBoxContainer = new VBoxContainer
-            {
-                Alignment = BoxContainer.AlignmentMode.Center
-            };
+            var vBoxContainer = new VBoxContainer { Alignment = BoxContainer.AlignmentMode.Center };
 
             vBoxContainer.AddThemeConstantOverride("separation", 24);
             lanPanel.AddChildSafely(vBoxContainer);
@@ -82,9 +79,7 @@ namespace LanMultiplayerMS.Patchs.Screens
                 ushort port = settings.HostPort;
 
                 if (addressInfo.Port.HasValue)
-                {
                     port = addressInfo.Port.Value;
-                }
 
                 DisplayServer.WindowSetTitle("Slay The Spire 2 (Client)");
                 if (addressInfo.Address != null)

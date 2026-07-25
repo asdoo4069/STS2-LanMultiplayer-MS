@@ -38,9 +38,7 @@ namespace LanMultiplayerMS.Components
             background.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
             foreach (var child in joinFriendRefreshButton.GetChildren())
-            {
                 joinButton.AddChildSafely(child.Duplicate());
-            }
 
             var controllerIcon = joinButton.GetNode<TextureRect>("ControllerIcon");
             controllerIcon.Owner = joinButton;
