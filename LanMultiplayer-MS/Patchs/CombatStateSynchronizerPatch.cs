@@ -66,7 +66,7 @@ namespace LanMultiplayerMS.Patchs
 
             foreach (var syncDatum in syncData)
             {
-                if (runLobby != null && !runLobby.ConnectedPlayerIds.Contains(syncDatum.Key))
+                if (runLobby != null && !runLobby.PlayerIds.Contains(syncDatum.Key))
                 {
                     logger.Debug($"[LanMultiplayer-MS] Skipping sync for disconnected player {syncDatum.Key}");
                     continue;

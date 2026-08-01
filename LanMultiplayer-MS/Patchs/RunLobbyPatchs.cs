@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.Saves;
 using LanMultiplayerMS.Models;
 using LanMultiplayerMS.Services;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
@@ -23,7 +24,7 @@ namespace LanMultiplayerMS.Patchs
             ])!;
             yield return typeof(RunLobby).GetConstructor([
                 typeof(GameMode), typeof(INetGameService), typeof(IRunLobbyListener), typeof(IPlayerCollection),
-                typeof(IEnumerable<ulong>)
+                typeof(IEnumerable<RunLobbyPlayer>)
             ])!;
             yield return typeof(LoadRunLobby).GetConstructor([
                 typeof(INetGameService), typeof(ILoadRunLobbyListener), typeof(SerializableRun)

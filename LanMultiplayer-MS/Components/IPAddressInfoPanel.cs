@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using LanMultiplayerMS.Services;
+using MegaCrit.Sts2.Core.ControllerInput;
 using BoxContainer = Godot.BoxContainer;
 using Control = Godot.Control;
 using HttpClient = System.Net.Http.HttpClient;
@@ -236,7 +237,7 @@ namespace LanMultiplayerMS.Components
 
         private void UpdateController()
         {
-            if (NControllerManager.Instance?.IsUsingController ?? false)
+            if (NControllerManager.Instance?.InputType == InputType.Controller)
                 ShowBox();
         }
 
@@ -361,7 +362,7 @@ namespace LanMultiplayerMS.Components
 
         private void OnMouseEntered()
         {
-            if (NControllerManager.Instance?.IsUsingController ?? false)
+            if (NControllerManager.Instance?.InputType == InputType.Controller)
                 return;
 
             ShowBox();
@@ -369,7 +370,7 @@ namespace LanMultiplayerMS.Components
 
         private void OnMouseExited()
         {
-            if (NControllerManager.Instance?.IsUsingController ?? false)
+            if (NControllerManager.Instance?.InputType == InputType.Controller)
                 return;
 
             HideBox();
