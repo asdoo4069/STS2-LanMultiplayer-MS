@@ -15,35 +15,17 @@ namespace LanMultiplayerMS.Components
     internal partial class IPAddressInfoPanel : Control
     {
         private Control? _content;
-
         private Control? _menu;
-
         private Control? _box;
-
         private Control? _loading;
-
         private CopiedLabel? _copiedLabel;
-
         private Control? _ipAddress;
-
         private IPAddressLabel? _ipAddressTitleLabel;
-
         private IPAddressLabel? _ipAddressLabel;
-
-        private Control? _ipv6Address;
-
-        private IPAddressLabel? _ipv6AddressTitleLabel;
-
-        private IPAddressLabel? _ipv6AddressLabel;
-
         private Control? _localIPAddress;
-
         private IPAddressLabel? _localIPAddressTitleLabel;
-
         private Control? _localIPAddressContainer;
-
         private CancellationTokenSource? _cancellationTokenSource;
-
         private static readonly HttpClient HttpClient = new();
 
         public static IPAddressInfoPanel Create()
@@ -54,8 +36,7 @@ namespace LanMultiplayerMS.Components
             var content = new VBoxContainer { Name = "Content", MouseFilter = MouseFilterEnum.Stop };
             ipAddressInfoPanel.AddChildSafely(content);
 
-            var menu = new Control
-            { Name = "Menu", CustomMinimumSize = new Vector2(300, 24), MouseFilter = MouseFilterEnum.Pass };
+            var menu = new Control { Name = "Menu", CustomMinimumSize = new Vector2(300, 24), MouseFilter = MouseFilterEnum.Pass };
             content.AddChildSafely(menu);
 
             var background = new NinePatchRect
@@ -116,8 +97,7 @@ namespace LanMultiplayerMS.Components
             box.AddChildSafely(container);
             container.SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
 
-            var loading = new Control
-            { Name = "Loading", CustomMinimumSize = new Vector2(64, 64), MouseFilter = MouseFilterEnum.Ignore };
+            var loading = new Control { Name = "Loading", CustomMinimumSize = new Vector2(64, 64), MouseFilter = MouseFilterEnum.Ignore };
             container.AddChildSafely(loading);
 
             var loadingIcon = new LoadingIcon { MouseFilter = MouseFilterEnum.Ignore };
@@ -129,7 +109,6 @@ namespace LanMultiplayerMS.Components
             loadingIcon.OffsetBottom = 32;
 
             AddAddressElement(container, "IPAddress", "LanMultiplayerMS.IP_ADDRESS_TITLE", false);
-            AddAddressElement(container, "IPV6IPAddress", "LanMultiplayerMS.IPV6_ADDRESS_TITLE", true);
             AddAddressContainer(container, "LocalIPAddress", "LanMultiplayerMS.LOCAL_IP_ADDRESS_TITLE");
 
             content.SetAnchorsAndOffsetsPreset(LayoutPreset.CenterTop);
@@ -142,8 +121,7 @@ namespace LanMultiplayerMS.Components
 
         private static void AddAddressElement(Node container, string name, string locKeyPrefix, bool isTrim)
         {
-            var addressElement = new HBoxContainer
-            { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
+            var addressElement = new HBoxContainer { Name = name, CustomMinimumSize = new Vector2(0, 24), MouseFilter = MouseFilterEnum.Ignore };
 
             var ipAddressTitleLabel = new IPAddressLabel { Name = "TitleLabel", MouseFilter = MouseFilterEnum.Ignore };
             addressElement.AddChildSafely(ipAddressTitleLabel);
@@ -193,30 +171,10 @@ namespace LanMultiplayerMS.Components
 
             _ipAddress.GuiInput += inputEvent =>
             {
-                if (inputEvent is InputEventMouseButton
-                    {
-                        ButtonIndex: MouseButton.Left, Pressed: true
-                    } inputEventMouseButton &&
-                    !string.IsNullOrEmpty(_ipAddressLabel.Text))
+                if (inputEvent is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true } inputEventMouseButton
+                    && !string.IsNullOrEmpty(_ipAddressLabel.Text))
                 {
                     DisplayServer.ClipboardSet(_ipAddressLabel.Text);
-                    _copiedLabel.Show(inputEventMouseButton.GlobalPosition);
-                }
-            };
-
-            _ipv6Address = GetNode<Control>("Content/Box/Container/IPV6IPAddress");
-            _ipv6AddressTitleLabel = _ipv6Address.GetNode<IPAddressLabel>("TitleLabel");
-            _ipv6AddressLabel = _ipv6Address.GetNode<IPAddressLabel>("Label");
-
-            _ipv6Address.GuiInput += inputEvent =>
-            {
-                if (inputEvent is InputEventMouseButton
-                    {
-                        ButtonIndex: MouseButton.Left, Pressed: true
-                    } inputEventMouseButton &&
-                    !string.IsNullOrEmpty(_ipv6AddressLabel.Text))
-                {
-                    DisplayServer.ClipboardSet(_ipv6AddressLabel.Text);
                     _copiedLabel.Show(inputEventMouseButton.GlobalPosition);
                 }
             };
@@ -252,7 +210,7 @@ namespace LanMultiplayerMS.Components
 
         private async Task InitializeAsync(CancellationToken cancellationToken)
         {
-            if (_ipAddress == null || _localIPAddress == null || _ipv6Address == null || _loading == null || _content == null || _localIPAddressContainer == null)
+            if (_ipAddress == null || _localIPAddress == null || _loading == null || _content == null || _localIPAddressContainer == null)
             {
                 Log.Error($"[LanMultiplayer-MS] {nameof(IPAddressInfoPanel)} has null element");
                 return;
@@ -260,7 +218,6 @@ namespace LanMultiplayerMS.Components
 
             _ipAddress.Visible = false;
             _localIPAddress.Visible = false;
-            _ipv6Address.Visible = false;
 
             foreach (var child in _localIPAddressContainer.GetChildren()) child.QueueFreeSafely();
 
@@ -297,8 +254,7 @@ namespace LanMultiplayerMS.Components
             {
                 if (localIPAddress != ipAddress)
                 {
-                    var ipAddressLabel = new IPAddressLabel
-                    { MouseFilter = MouseFilterEnum.Pass, HorizontalAlignment = HorizontalAlignment.Center };
+                    var ipAddressLabel = new IPAddressLabel { MouseFilter = MouseFilterEnum.Pass, HorizontalAlignment = HorizontalAlignment.Center };
 
                     ipAddressLabel.SetTextAutoSize($"{localIPAddress}:{port}");
 
@@ -317,27 +273,9 @@ namespace LanMultiplayerMS.Components
                 }
             }
 
-            var hasIPV6Address = false;
-
-            try
-            {
-                var ipv6Address = await HttpClient.GetStringAsync("https://api-ipv6.ip.sb/ip", cancellationToken);
-                _ipv6AddressLabel?.SetTextAutoSize($"[{ipv6Address.Replace("\n", string.Empty)}]:{port}");
-                hasIPV6Address = true;
-            }
-            catch (OperationCanceledException ex)
-            {
-                Log.Debug($"[LanMultiplayer-MS] " + ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Log.Warn($"[LanMultiplayer-MS] " + ex.Message);
-            }
-
             _loading.Visible = false;
             _ipAddress.Visible = hasIPAddress;
             _localIPAddress.Visible = hasLocalIPAddress;
-            _ipv6Address.Visible = hasIPV6Address;
 
             _content.SetAnchorsAndOffsetsPreset(LayoutPreset.CenterTop);
         }
@@ -378,24 +316,22 @@ namespace LanMultiplayerMS.Components
 
         private void ShowBox()
         {
-            if (_box == null || _ipAddress == null || _localIPAddress == null || _ipv6Address == null)
+            if (_box == null || _ipAddress == null || _localIPAddress == null)
                 return;
 
             _box.Modulate = new Color(Colors.White);
             _ipAddress.MouseFilter = MouseFilterEnum.Pass;
             _localIPAddress.MouseFilter = MouseFilterEnum.Pass;
-            _ipv6Address.MouseFilter = MouseFilterEnum.Pass;
         }
 
         private void HideBox()
         {
-            if (_box == null || _ipAddress == null || _localIPAddress == null || _ipv6Address == null)
+            if (_box == null || _ipAddress == null || _localIPAddress == null)
                 return;
 
             _box.Modulate = new Color(Colors.White, 0);
             _ipAddress.MouseFilter = MouseFilterEnum.Ignore;
             _localIPAddress.MouseFilter = MouseFilterEnum.Ignore;
-            _ipv6Address.MouseFilter = MouseFilterEnum.Ignore;
         }
 
         public override void _ExitTree()
