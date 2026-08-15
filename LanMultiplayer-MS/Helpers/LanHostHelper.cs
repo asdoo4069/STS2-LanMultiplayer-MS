@@ -30,18 +30,15 @@ namespace LanMultiplayerMS.Helpers
 
         static LanHostHelper()
         {
-            UpdateButtons = AccessTools.MethodDelegate<Action<NMultiplayerSubmenu>>(
-                typeof(NMultiplayerSubmenu).GetMethod("UpdateButtons",
-                    BindingFlags.Instance | BindingFlags.NonPublic));
+            UpdateButtons = AccessTools.MethodDelegate<Action<NMultiplayerSubmenu>>(typeof(NMultiplayerSubmenu).GetMethod("UpdateButtons", BindingFlags.Instance | BindingFlags.NonPublic));
         }
 
-        public static void StartHost(GameMode gameMode, Control loadingOverlay, NSubmenuStack stack, ushort port,
-            int maxPlayers)
+        public static void StartHost(GameMode gameMode, Control loadingOverlay, NSubmenuStack stack, ushort port, int maxPlayers)
         {
             loadingOverlay.Visible = true;
             try
             {
-                var netService = new NetHostGameService();
+                var netService = new NetHostGameService(PeerVersionInfo.LocalDefault());
                 NetErrorInfo? netErrorInfo = null;
                 //Add one more max client to send the full lobby message
                 netService.StartENetHost(port, maxPlayers + 1);
@@ -99,7 +96,7 @@ namespace LanMultiplayerMS.Helpers
             loadingOverlay.Visible = true;
             try
             {
-                var netService = new NetHostGameService();
+                var netService = new NetHostGameService(PeerVersionInfo.LocalDefault());
                 NetErrorInfo? netErrorInfo = null;
                 netService.StartENetHost(port, maxPlayers + 1);
                 Log.Info($"[LanMultiplayer-MS] HostGame open on port:{port}");
@@ -142,9 +139,7 @@ namespace LanMultiplayerMS.Helpers
 
         public static void StartLoad(NSubmenuButton nSubmenuButton, Control loadingOverlay, NSubmenuStack stack, ushort port, int maxPlayers)
         {
-            var readSaveResult =
-                LanRunSaveManagerService.LoadAndCanonicalizeMultiplayerRunSave(
-                    PlatformUtil.GetLocalPlayerId(PlatformType.None));
+            var readSaveResult = LanRunSaveManagerService.LoadAndCanonicalizeMultiplayerRunSave(PlatformUtil.GetLocalPlayerId(PlatformType.None));
             if (!readSaveResult.Success || readSaveResult.SaveData == null)
             {
                 Log.Warn("[LanMultiplayer-MS] Broken multiplayer run save detected, disabling button");

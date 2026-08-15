@@ -4,7 +4,6 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Unlocks;
 using LanMultiplayerMS.Helpers;
-using MegaCrit.Sts2.Core.Multiplayer;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedType.Global
@@ -21,7 +20,7 @@ namespace LanMultiplayerMS.Patchs.Messages
             writer.WriteModel(__instance.character);
             writer.Write(__instance.unlockState);
             writer.WriteInt(__instance.maxMultiplayerAscensionUnlocked);
-            writer.Write(__instance.versionInfo);
+            writer.WriteBool(__instance.isModded);
             writer.WriteBool(__instance.isReady);
 
             return false;
@@ -38,7 +37,7 @@ namespace LanMultiplayerMS.Patchs.Messages
             __instance.character = reader.ReadModel<CharacterModel>();
             __instance.unlockState = reader.Read<SerializableUnlockState>();
             __instance.maxMultiplayerAscensionUnlocked = reader.ReadInt();
-            __instance.versionInfo = reader.Read<PeerVersionInfo>();
+            __instance.isModded = reader.ReadBool();
             __instance.isReady = reader.ReadBool();
 
             return false;
